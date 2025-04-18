@@ -5,5 +5,5 @@ using UnityEngine;
 public interface IObstacle 
 {
 
-    void OnHit();
+    int OnHit();
 }

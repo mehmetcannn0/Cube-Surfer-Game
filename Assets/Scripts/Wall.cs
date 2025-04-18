@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour,IObstacle
 {
-    public void OnHit()
+  public  int wallSize; 
+
+    private void Start()
+    { 
+        //wallSize = 2;
+    }
+    public int OnHit()
     {
-        Debug.Log("obstacle");
+        return wallSize;
 
     }
 

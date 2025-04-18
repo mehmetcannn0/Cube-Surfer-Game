@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface ICollectable 
 {
-    void OnCollect( Transform cubesParentsTransform,Vector3 lowerCubePosition);
+    int OnCollect( Transform cubesParentsTransform,Vector3 upperCubePosition ,int cubeIndex);
+
 }

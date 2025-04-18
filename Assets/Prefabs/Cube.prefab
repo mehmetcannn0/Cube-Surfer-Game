@@ -132,12 +132,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 1.6, y: 1.9077462, z: 1.2290542}
+  m_Center: {x: 0, y: 0.9538731, z: 0.024984002}
 --- !u!114 &974675405172411059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,3 +150,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7b648fcfac124141a16b8daae69e390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cubeSize: 0
+  cubeList: []

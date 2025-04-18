@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInputManager : MonoBehaviour
@@ -29,9 +27,11 @@ public class PlayerInputManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
+
             if (touch.phase == TouchPhase.Moved)
             {
-                horizontalValue = touch.deltaPosition.x * 0.01f;
+                horizontalValue = touch.deltaPosition.x * 15f * Time.deltaTime;
+               // horizontalValue = (touch.deltaPosition.x < 0 ? -2f : 2f) * Time.deltaTime;
             }
         }
         else
@@ -40,3 +40,14 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 }
+
+  //switch (touch.phase)
+  //          {
+  //              case TouchPhase.Moved:
+  //                  input = touch.deltaPosition.x < 0 ? -2f : 2f;
+  //                  break;
+  //              case TouchPhase.Ended:
+  //                  horizontalValue = input;
+  //                  break;
+
+  //          }   
