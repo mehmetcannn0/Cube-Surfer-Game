@@ -1,8 +1,7 @@
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
-{
-    // Start is called before the first frame update
+{ 
     LevelManager levelManager;
     void Start()
     {
@@ -10,12 +9,7 @@ public class GameManager : MonoBehaviour
         levelManager.StartLevel();
 
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+ 
     public void StartGame()
     {
 

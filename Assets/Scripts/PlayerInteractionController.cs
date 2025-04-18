@@ -1,11 +1,26 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class PlayerInteractionController : MonoBehaviour
 {
-    [SerializeField] private Transform cubeParent;
-    [SerializeField] private Transform playerVisualTransform;
+    public Transform cubeParent ;
+    public Transform playerVisualTransform;
+
+    public static PlayerInteractionController Instance;
 
     LevelManager levelManager;
+
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
     private void Start()
     {
         levelManager = LevelManager.Instance;
@@ -14,16 +29,28 @@ public class PlayerInteractionController : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectable))
         {
-            OnCollectableInteraction(collectable);
-            return;
+            collectable.Collect();
         }
 
-        if (collision.gameObject.TryGetComponent(out IObstacle obstacle))
+        Vector3 contactPoint = collision.contacts[0].point;
+        Vector3 directionToContact = (contactPoint - transform.position).normalized;
+
+        if (Vector3.Dot(transform.forward, directionToContact) > 0.7f)
         {
-            OnObstacleInteraction(collision, obstacle);
-            return;
-        }
+            if (collision.gameObject.TryGetComponent(out IStackable stackable))
+            {
+                OnStackableInteraction(stackable);
+                return;
+            }
 
+            if (collision.gameObject.TryGetComponent(out IObstacle obstacle))
+            {
+                OnObstacleInteraction(collision, obstacle);
+                return;
+            }
+
+        }
+        return;
     }
 
     private void OnObstacleInteraction(Collision collision, IObstacle obstacle)
@@ -43,14 +70,14 @@ public class PlayerInteractionController : MonoBehaviour
         }
     }
 
-    private void OnCollectableInteraction(ICollectable collectable)
+    private void OnStackableInteraction(IStackable stackable)
     {
-        int cubeSize = collectable.OnCollect(cubesParentsTransform: cubeParent, upperCubePosition: playerVisualTransform.localPosition, cubeIndex: 0);
+        int cubeSize = stackable.OnStack(cubeIndex: 0);
         playerVisualTransform.localPosition = playerVisualTransform.localPosition + (2 * Vector3.up);
         for (int i = 1; i < cubeSize; i++)
         {
-            collectable.OnCollect(cubesParentsTransform: cubeParent, upperCubePosition: playerVisualTransform.localPosition, cubeIndex: i);
-            playerVisualTransform.localPosition = playerVisualTransform.localPosition + (2 * Vector3.up);
+            stackable.OnStack(cubeIndex: i);
+            playerVisualTransform.localPosition += 2 * Vector3.up;
         }
     }
 
@@ -77,12 +104,14 @@ public class PlayerInteractionController : MonoBehaviour
             transform.position = collision.gameObject.transform.position + (2 * Vector3.up);
         }
 
-        if (wallSize == 0)
+        if (wallSize == childCount)
         {
-            playerVisualTransform.localPosition = playerVisualPosition + (2 * Vector3.down * 1);
+            playerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (2 * wallSize)), 2f);
+            return;
         }
 
-        playerVisualTransform.localPosition = playerVisualPosition + (2 * Vector3.down * wallSize); 
+        playerVisualTransform.localPosition += 2 * Vector3.down * wallSize;
+
     }
 
 }
