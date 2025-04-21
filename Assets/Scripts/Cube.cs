@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour, IStackable
 {
-    private BoxCollider boxCollider; 
     public int cubeSize;
     public List<Cube> cubeList;
+
+    private BoxCollider boxCollider; 
+    
     PlayerInteractionController playerInteractionController;
 
     private void Start()
     {
         playerInteractionController = PlayerInteractionController.Instance;
-
         boxCollider = GetComponent<BoxCollider>();
         cubeList.Add(this);
     }

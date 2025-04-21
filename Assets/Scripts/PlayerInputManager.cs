@@ -2,10 +2,7 @@ using UnityEngine;
 
 public class PlayerInputManager : MonoBehaviour
 {
-    public float horizontalValue { get; private set; }
-
-    //PlayerMovementManager playerMovementManager;
-
+    public float horizontalValue { get; private set; } 
 
     public static PlayerInputManager Instance;
 
@@ -63,6 +60,10 @@ public class PlayerInputManager : MonoBehaviour
             {
                 horizontalValue = touch.deltaPosition.x * 15f * Time.deltaTime;
             }
+            //else
+            //{
+            //    horizontalValue = 0;
+            //}
         }
         else
         {

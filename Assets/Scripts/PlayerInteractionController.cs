@@ -6,11 +6,10 @@ public class PlayerInteractionController : MonoBehaviour
     public Transform cubeParent ;
     public Transform playerVisualTransform;
 
-    public static PlayerInteractionController Instance;
-
     LevelManager levelManager;
 
-
+    public static PlayerInteractionController Instance;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -30,6 +29,7 @@ public class PlayerInteractionController : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out ICollectable collectable))
         {
             collectable.Collect();
+            //GameAction.OnCollectCoin?.Invoke();
         }
 
         Vector3 contactPoint = collision.contacts[0].point;
@@ -50,7 +50,11 @@ public class PlayerInteractionController : MonoBehaviour
             }
 
         }
-        return;
+        if (collision.gameObject.CompareTag("finish"))
+        {
+            levelManager.FinishLEvel();
+            
+        }
     }
 
     private void OnObstacleInteraction(Collision collision, IObstacle obstacle)
@@ -65,7 +69,8 @@ public class PlayerInteractionController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("gameover");
+            //Debug.LogError("gameover");
+            levelManager.GameOver();
 
         }
     }
@@ -90,6 +95,7 @@ public class PlayerInteractionController : MonoBehaviour
 
         }
     }
+
     private void SetNewPosition(Collision collision, int wallSize, int childCount)
     {
         Vector3 playerVisualPosition = playerVisualTransform.localPosition;
@@ -101,7 +107,7 @@ public class PlayerInteractionController : MonoBehaviour
             Vector3 childLocalPosition = cube.localPosition;
             cube.localPosition = childLocalPosition + (2 * Vector3.down * wallSize);
 
-            transform.position = collision.gameObject.transform.position + (2 * Vector3.up);
+            transform.position = collision.gameObject.transform.position + (2 *wallSize * Vector3.up);
         }
 
         if (wallSize == childCount)
@@ -115,3 +121,7 @@ public class PlayerInteractionController : MonoBehaviour
     }
 
 }
+//    public static class GameAction{
+
+//    public static Action OnCollectCoin;
+//}
