@@ -5,7 +5,7 @@ public class PlayerInputManager : MonoBehaviour
     public float horizontalValue { get; private set; } 
 
     public static PlayerInputManager Instance;
-
+    public bool isActive {  get; private set; }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -15,6 +15,10 @@ public class PlayerInputManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    private void Start()
+    {
+        ToggleIsActive();
     }
     //private void Start()
     //{
@@ -52,7 +56,7 @@ public class PlayerInputManager : MonoBehaviour
             }
         }*/
        
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && isActive)
         {
             Touch touch = Input.GetTouch(0);
 
@@ -69,6 +73,12 @@ public class PlayerInputManager : MonoBehaviour
         {
             horizontalValue = 0;
         }
+    }
+
+    public void ToggleIsActive()
+    {
+        isActive = !isActive;
+        Debug.Log("isActive " + isActive);
     }
     }
 

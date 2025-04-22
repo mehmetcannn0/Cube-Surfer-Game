@@ -3,30 +3,37 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    int[] allowedXPositions = { -4, -2, 0, 2, 4 };
-    int coinCountInLevel = 200;
-    float localScaleZ;
-    int spaceSize = 20;
+    private int[] allowedXPositions = { -4, -2, 0, 2, 4 };
+    private float groundlength;
+    private int coinCountInGround = 200;
+    private int spaceSize = 20;
 
-    [SerializeField] Transform ground;
+    private List<GameObject> walls = new List<GameObject>();
+    private List<GameObject> cubes = new List<GameObject>();
+    private List<GameObject> coins = new List<GameObject>();
+
     [SerializeField] GameObject player;
+    [SerializeField] Transform ground;
     [SerializeField] Transform wallsParents;
     [SerializeField] Transform coinsParents;
     [SerializeField] Transform playerVisualTransform;
 
-
+    public RectTransform targetCoinUI;
     public Transform cubesParentOnGround;
     public Canvas canvas;
-    public RectTransform targetCoinUI;
-    public List<GameObject> walls;
-    public List<GameObject> cubes;
-    public List<GameObject> coins;
 
-    GameObject finishGroupGround;
-
+    LeaderboardManager leaderboardManager;
     PrefabManager prefabManager;
     GameManager gameManager;
+    GameObject finishGroupGround;
     UIManager uiManager;
+    SaveData saveData;
+    public enum LevelDirection
+    {
+        Forward,
+        Left,
+        Right
+    }
 
     public static LevelManager Instance;
     private void Awake()
@@ -42,122 +49,163 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        uiManager = UIManager.Instance;
-        gameManager = GameManager.Instance;
+        leaderboardManager = LeaderboardManager.Instance;
         prefabManager = PrefabManager.Instance;
+        gameManager = GameManager.Instance;
+        uiManager = UIManager.Instance;
+        saveData = SaveData.Instance;
     }
 
     public void CreateLevel()
     {
+        Vector3 groundForward = Vector3.forward; 
+        Vector3 groundLeft = Vector3.left;
+        Vector3 groundRight = Vector3.right;
         //player = Instantiate(prefabManager.playerPrefab,Vector3.zero,Quaternion.identity);
+
         player.transform.position = Vector3.zero;
         playerVisualTransform.position = Vector3.zero;
+        groundlength = ground.transform.localScale.z;
 
+        CreateGround(groundlength);
 
-        localScaleZ = ground.transform.localScale.z;
-        CreateGround(localScaleZ);
-        for (int i = 1; i < localScaleZ / 20; i++)
+        for (int i = 1; i < groundlength / 20; i++)
         {
-            int cubeOrWall = UnityEngine.Random.Range(0, 2);
+            int cubeOrWall = Random.Range(0, 2);
             if (cubeOrWall != 0 || i < 4)
             {
-                CreateCube(i);
+                CreateCube(i, LevelDirection.Forward, Vector3.zero);
+                CreateCube(i, LevelDirection.Left, new Vector3(0, 0, groundlength));
+                CreateCube(i, LevelDirection.Right, new Vector3(-groundlength, 0, groundlength));
             }
             else
             {
-                CreateWall(i);
+                CreateWall(i, LevelDirection.Forward, Vector3.zero);
+                CreateWall(i, LevelDirection.Left, new Vector3(0, 0, groundlength));
+                CreateWall(i, LevelDirection.Right, new Vector3(-groundlength, 0, groundlength));
             }
         }
-        CreateCoin();
+        CreateCoin(LevelDirection.Forward);
+        CreateCoin(LevelDirection.Left);
+        CreateCoin(LevelDirection.Right);
     }
-
-    private void CreateCube(int i)
+    private void CreateCube(int index, LevelDirection direction, Vector3 startOffset)
     {
-        int xPosition = -4;
+
+
         for (int j = 0; j < 5; j++)
         {
-            int randomCubeSize = UnityEngine.Random.Range(0, 4);
-            if (randomCubeSize != 0)
+            int randomCubeSize = Random.Range(0, 4);
+            if (randomCubeSize == 0) continue;
+
+            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset);
+            GameObject newCubeObj = Instantiate(prefabManager.cubePrefab, basePos, Quaternion.identity, cubesParentOnGround);
+            cubes.Add(newCubeObj);
+
+            Cube newCube = newCubeObj.GetComponent<Cube>();
+            newCube.cubeSize = randomCubeSize;
+
+            for (int k = 1; k < randomCubeSize; k++)
             {
-                GameObject newCubeObj = Instantiate(prefabManager.cubePrefab, new Vector3(xPosition + j * 2, 0, i * spaceSize), Quaternion.identity, cubesParentOnGround);
-                cubes.Add(newCubeObj);
-                Cube newCube = newCubeObj.GetComponent<Cube>();
-                newCube.cubeSize = randomCubeSize;
-                for (int k = 1; k < randomCubeSize; k++)
-                {
-                    GameObject cube = Instantiate(prefabManager.cubePrefab, new Vector3(xPosition + j * 2, k * 2, i * spaceSize), Quaternion.identity, cubesParentOnGround);
-                    newCube.cubeList.Add(cube.GetComponent<Cube>());
-                    cubes.Add(cube);
-                }
+                Vector3 stackPos = basePos + Vector3.up * k * 2;
+                GameObject cube = Instantiate(prefabManager.cubePrefab, stackPos, Quaternion.identity, cubesParentOnGround);
+                newCube.cubeList.Add(cube.GetComponent<Cube>());
+                cubes.Add(cube);
             }
-
         }
     }
 
-    private void CreateWall(int i)
+    private void CreateWall(int index, LevelDirection direction, Vector3 startOffset)
     {
-        int xPosition = -4;
+
         for (int j = 0; j < 5; j++)
         {
-            int randomWallSize = UnityEngine.Random.Range(1, 4);
-            GameObject newWallObj = Instantiate(prefabManager.wallPrefab, new Vector3(xPosition + j * 2, 0, i * spaceSize), Quaternion.identity, wallsParents);
+            int randomWallSize = Random.Range(1, 4);
+
+            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset);
+            GameObject newWallObj = Instantiate(prefabManager.wallPrefab, basePos, Quaternion.identity, wallsParents);
             walls.Add(newWallObj);
+
             newWallObj.GetComponent<Wall>().wallSize = randomWallSize;
+
             for (int k = 1; k < randomWallSize; k++)
             {
-                GameObject wall = Instantiate(prefabManager.wallPrefab, new Vector3(xPosition + j * 2, k * 2, i * spaceSize), Quaternion.identity, newWallObj.transform);
+                Vector3 stackPos = basePos + Vector3.up * k * 2;
+                GameObject wall = Instantiate(prefabManager.wallPrefab, stackPos, Quaternion.identity, newWallObj.transform);
                 walls.Add(wall);
-
             }
         }
-
     }
 
-    private void CreateCoin()
+    private void CreateCoin(LevelDirection direction)
     {
-
-        for (int i = 0; i < coinCountInLevel; i++)
+        for (int i = 0; i < coinCountInGround; i++)
         {
-
-            int randomX = allowedXPositions[UnityEngine.Random.Range(0, allowedXPositions.Length)];
+            int randomX = allowedXPositions[Random.Range(0, allowedXPositions.Length)];
             int randomZ;
             do
             {
-                randomZ = UnityEngine.Random.Range(0, (int)localScaleZ);
+                randomZ = Random.Range(0, (int)groundlength);
             } while (randomZ % 10 == 0);
 
-            Vector3 spawnPosition = new Vector3(randomX, 0, randomZ);
+            Vector3 spawnPosition = GetCoinPosition(randomX, randomZ, direction);
             GameObject newCoin = Instantiate(prefabManager.coinPrefab, spawnPosition, Quaternion.identity, coinsParents);
             coins.Add(newCoin);
-            //newCoin.collectCoinAction += gameEvents.CollectCoin;
+        }
+    }
+
+    private Vector3 GetObjectPosition(int index, int j, LevelDirection direction, Vector3 startOffset  )
+    {
+        int horizontalPosition = -4;
+        switch (direction)
+        {
+            case LevelDirection.Forward:
+                return new Vector3(horizontalPosition + j * 2, 0, index * spaceSize) + startOffset;
+            case LevelDirection.Left:
+                return new Vector3(-index * spaceSize, 0, horizontalPosition + j * 2) + startOffset;
+            case LevelDirection.Right:
+                return new Vector3(horizontalPosition + j * 2, 0, index * spaceSize) + startOffset;
+            default:
+                return Vector3.zero;
+        }
+    }
+    private Vector3 GetCoinPosition(int x, int z, LevelDirection direction)
+    {
+        switch (direction)
+        {
+            case LevelDirection.Forward:
+                return new Vector3(x, 0, z);
+            case LevelDirection.Left:
+                return new Vector3(-z, 0, x + groundlength);
+            case LevelDirection.Right:
+                return new Vector3(x - groundlength, 0, z + groundlength);
+            default:
+                return Vector3.zero;
         }
     }
 
     public void StartLevel()
     {
-        gameManager.StartGame();
+        if (gameManager.playerName != "" && gameManager.playerName != null)
+        {
+            gameManager.StartGame();
+            uiManager.CloseUIs();
+        }
+
     }
 
     public void NextLevel()
     {
-        if (gameManager.playerName != "" && gameManager.playerName != null)
-        {
-            DestroyObjects(walls);
-            DestroyObjects(cubes);
-            DestroyObjects(coins);
-            Destroy(finishGroupGround);
-            CreateLevel();
-            gameManager.NextLevel();
-            uiManager.playerNameUI.SetActive(false);
-            uiManager.finishLevelUI.SetActive(false);   
+        DestroyObjects(walls);
+        DestroyObjects(cubes);
+        DestroyObjects(coins);
+        Destroy(finishGroupGround);
+        CreateLevel();
+        PlayerMovementManager.Instance.RotatePlayer();
 
-        }
-        else
-        {
+        gameManager.NextLevel();
+        uiManager.finishLevelUI.SetActive(false);
 
-            uiManager.playerNameUI.SetActive(true);
-
-        }
 
     }
 
@@ -169,39 +217,55 @@ public class LevelManager : MonoBehaviour
 
     public void GameOver()
     {
-        uiManager.gameOverUI.SetActive(true);
         uiManager.playerNameUI.SetActive(true);
-
+        uiManager.leaderboardUI.SetActive(true);
+        SavePlayerData();
+        GetAndUpdatePlayersData();
+        leaderboardManager.UpdateLeaderboardUI();
+        uiManager.gameOverUI.SetActive(true);
+        GetAndUpdatePlayersData();
         gameManager.GameOver();
+
     }
 
     public void RestartLevel()
     {
         if (gameManager.playerName != "" && gameManager.playerName != null)
         {
-            Debug.Log(gameManager.playerName);
-            DestroyObjects(walls);
-            DestroyObjects(cubes);
-            DestroyObjects(coins);
-            Destroy(finishGroupGround);
+            ClearLevel();
             CreateLevel();
             gameManager.StartGame();
-            uiManager.playerNameUI.SetActive(false);
-            uiManager.gameOverUI.SetActive(false);
-
+            uiManager.CloseUIs();
         }
-        else
-        {
-            uiManager.playerNameUI.SetActive(true);
-
-        }
-
     }
-
     private void CreateGround(float localScaleZ)
     {
 
-        finishGroupGround = Instantiate(prefabManager.finishGroup, new Vector3(0, -0.5f, localScaleZ + 15), Quaternion.identity);
+        finishGroupGround = Instantiate(prefabManager.finishGroup, new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15), Quaternion.identity);
+    }
+    private void SavePlayerData()
+    {
+        Player newPlayer = new Player();
+        newPlayer.name = gameManager.playerName;
+        newPlayer.score = gameManager.score;
+        newPlayer.gold = gameManager.gold;
+        saveData.leaderboard.players.Add(newPlayer);
+        saveData.SaveToJson();
+    }
+
+    private void GetAndUpdatePlayersData()
+    {
+        saveData.LoadFromJson();
+    }
+
+
+
+    private void ClearLevel()
+    {
+        DestroyObjects(walls);
+        DestroyObjects(cubes);
+        DestroyObjects(coins);
+        Destroy(finishGroupGround);
     }
     public void DestroyObjects(List<GameObject> list)
     {

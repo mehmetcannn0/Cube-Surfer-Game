@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour, IStackable
 {
-    public int cubeSize;
+    private BoxCollider boxCollider;
     public List<Cube> cubeList;
+    public int cubeSize;
 
-    private BoxCollider boxCollider; 
-    
     PlayerInteractionController playerInteractionController;
 
     private void Start()
@@ -17,12 +16,12 @@ public class Cube : MonoBehaviour, IStackable
         cubeList.Add(this);
     }
 
-    public int OnStack(  int cubeIndex)
-    { 
-        cubeList[cubeIndex].transform.parent = playerInteractionController. cubeParent;
+    public int OnStack(int cubeIndex)
+    {
+        cubeList[cubeIndex].transform.parent = playerInteractionController.cubeParent;
         cubeList[cubeIndex].boxCollider.enabled = false;
-        cubeList[cubeIndex].transform.localPosition = playerInteractionController. playerVisualTransform.localPosition;
+        cubeList[cubeIndex].transform.localPosition = playerInteractionController.playerVisualTransform.localPosition;
         return cubeSize;
     }
-     
+
 }

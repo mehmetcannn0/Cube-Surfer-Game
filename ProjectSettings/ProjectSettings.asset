@@ -140,7 +140,10 @@ PlayerSettings:
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
   bundleVersion: 1.0.2
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 6635044880345350398, guid: 4d09ab88f355a664ea1023a6e205276f, type: 2}
+  - {fileID: 11400000, guid: 47502fc69dd83874f869fbfce218c3c9, type: 2}
+  - {fileID: 11400000, guid: 104c22e6fc0ea674492247ece334cb09, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -162,6 +165,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.mehmetceraslan.CubeSurferGame
+    Standalone: com.mehmetceraslan.Cube-Surfer-Game
   buildNumber:
     Standalone: 0
     VisionOS: 0

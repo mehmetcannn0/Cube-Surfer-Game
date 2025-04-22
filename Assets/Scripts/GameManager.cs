@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-      public string playerName { get; private set; }
-     public  int score {  get; private set; }
-
+    public string playerName { get; private set; }
+    public int score { get; private set; }
 
     PlayerMovementManager playerMovementManager;
     LevelManager levelManager;
-    public int gold {  get; private set; }
+    public int gold { get; private set; }
 
     public static GameManager Instance;
 
@@ -40,29 +39,34 @@ public class GameManager : MonoBehaviour
         levelManager.CreateLevel();
 
     }
- 
+
     public void StartGame()
     {
+        gold = 0;
         Debug.Log("start game");
         playerMovementManager.RunPlayer();
     }
-    
+
     public void IncreaseGold()
     {
         gold++;
     }
-    
+    public void AddScore(int addScore)
+    {
+        score += addScore;
+    }
+
     public void FinishLevel()
     {
         playerMovementManager.StopPlayer();
     }
-    
+
     public void NextLevel()
     {
         playerMovementManager.RunPlayer();
 
     }
-    
+
     public void GameOver()
     {
         playerMovementManager.StopPlayer();

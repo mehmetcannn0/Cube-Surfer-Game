@@ -3,13 +3,15 @@ using UnityEngine;
 
 public class PlayerInteractionController : MonoBehaviour
 {
-    public Transform cubeParent ;
+    public Transform cubeParent;
     public Transform playerVisualTransform;
 
+    PlayerMovementManager playerMovementManager;
     LevelManager levelManager;
+    GameManager gameManager;
 
     public static PlayerInteractionController Instance;
-    
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -22,7 +24,19 @@ public class PlayerInteractionController : MonoBehaviour
     }
     private void Start()
     {
+        playerMovementManager = PlayerMovementManager.Instance;
         levelManager = LevelManager.Instance;
+        gameManager = GameManager.Instance;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("rotate"))
+        {
+            Debug.Log("ground finish");
+
+            playerMovementManager.RotatePlayer();
+
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -52,8 +66,9 @@ public class PlayerInteractionController : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("finish"))
         {
+            Debug.Log("level finish");
             levelManager.FinishLEvel();
-            
+
         }
     }
 
@@ -78,6 +93,7 @@ public class PlayerInteractionController : MonoBehaviour
     private void OnStackableInteraction(IStackable stackable)
     {
         int cubeSize = stackable.OnStack(cubeIndex: 0);
+        gameManager.AddScore(cubeSize);
         playerVisualTransform.localPosition = playerVisualTransform.localPosition + (2 * Vector3.up);
         for (int i = 1; i < cubeSize; i++)
         {
@@ -107,7 +123,7 @@ public class PlayerInteractionController : MonoBehaviour
             Vector3 childLocalPosition = cube.localPosition;
             cube.localPosition = childLocalPosition + (2 * Vector3.down * wallSize);
 
-            transform.position = collision.gameObject.transform.position + (2 *wallSize * Vector3.up);
+            transform.position = collision.gameObject.transform.position + (2.5f * wallSize * Vector3.up);
         }
 
         if (wallSize == childCount)
