@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         gold = 0;
+        score = 0;
         Debug.Log("start game");
         playerMovementManager.RunPlayer();
     }
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
     public void UpdatePlayerName(string value)
     {
         playerName = value;
-        Debug.Log("NickName: " + playerName);
+        //Debug.Log("NickName: " + playerName);
     }
 
 }

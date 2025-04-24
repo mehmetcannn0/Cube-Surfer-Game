@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI GoldUI;
+    [SerializeField] TextMeshProUGUI goldUI;
+    [SerializeField] TextMeshProUGUI scoreUI;
 
     [SerializeField] GameObject startUI;
     public GameObject finishLevelUI;
@@ -25,14 +26,30 @@ public class UIManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public void CloseUIs()
+
+    public void MakeDeactiveUI(GameObject UIObject)
+    {
+        UIObject.SetActive(false);
+
+    }
+    public void MakeActiveUI(GameObject UIObject)
+    {
+        UIObject.SetActive(true);
+
+    }
+
+    /// <summary>
+    ///  Close startUI ,finishLevelUI,playerNameUI,leaderboardUI,gameOverUI and call UpdateScoreUI, UpdateGoldUI
+    /// </summary>
+    public void DeactiveUIs()
     {
         startUI.SetActive(false);
         finishLevelUI.SetActive(false);
         playerNameUI.SetActive(false);
         leaderboardUI.SetActive(false);
         gameOverUI.SetActive(false);
-
+        UpdateScoreUI();
+        UpdateGoldUI();
     }
 
     private void OnEnable()
@@ -52,7 +69,11 @@ public class UIManager : MonoBehaviour
 
     public void UpdateGoldUI()
     {
-        GoldUI.text = gameManager.gold.ToString();
+        goldUI.text = gameManager.gold.ToString();
+    }
+    public void UpdateScoreUI()
+    {
+        scoreUI.text = gameManager.score.ToString();
     }
 
 }

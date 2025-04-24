@@ -7,7 +7,7 @@ public class PlayerMovementManager : MonoBehaviour
     private float HORIZONTAL_LIMIT_VALUE = 4;
     private float HORIZONTAL_MOVEMENT_SPEED = 0;
     private float FORWARD_MOVEMENT_SPEED = 0;
-
+    private float ROTATION_ADNIMATION_TÝME = 1f;
     public enum PlayerDirection
     {
         Forward,
@@ -44,6 +44,12 @@ public class PlayerMovementManager : MonoBehaviour
         PlayerHorizontalMovement();
     }
 
+    public void PlayerDirectionSetForward()
+    { 
+        HORIZONTAL_LIMIT_VALUE = 4;
+        transform.DORotate(new Vector3(0, 0, 0), 0.1f);
+        direction= PlayerDirection.Forward; 
+    }
     private void PlayerForwardMovement()
     {
         transform.Translate(Vector3.forward * FORWARD_MOVEMENT_SPEED * Time.fixedDeltaTime);
@@ -62,14 +68,13 @@ public class PlayerMovementManager : MonoBehaviour
             else
             {
                 newPositionHorizontalValue = transform.position.x + playerInputManager.horizontalValue * HORIZONTAL_MOVEMENT_SPEED * Time.fixedDeltaTime;
-                //newPositionX = transform.position.x + playerInputManager.horizontalValue;
                 newPositionHorizontalValue = Mathf.Clamp(newPositionHorizontalValue, HORIZONTAL_LIMIT_VALUE - 8, HORIZONTAL_LIMIT_VALUE);
                 transform.position = new Vector3(newPositionHorizontalValue, transform.position.y, transform.position.z);
-                //transform.DOMoveX(newPositionX,1);
+              
             }
         }
 
-    }
+    } 
 
     public void RotatePlayer()
     {
@@ -78,7 +83,7 @@ public class PlayerMovementManager : MonoBehaviour
         if (direction == PlayerDirection.Forward)
         {
             HORIZONTAL_LIMIT_VALUE = 362;
-            transform.DORotate(new Vector3(0, -90, 0), 2f).OnComplete(() =>
+            transform.DORotate(new Vector3(0, -90, 0), ROTATION_ADNIMATION_TÝME).OnComplete(() =>
             {
                 direction = PlayerDirection.Left;
                 playerInputManager.ToggleIsActive();
@@ -89,7 +94,7 @@ public class PlayerMovementManager : MonoBehaviour
         else if (direction == PlayerDirection.Left)
         {
             HORIZONTAL_LIMIT_VALUE = -354;
-            transform.DORotate(new Vector3(0, 0, 0), 2f).OnComplete(() =>
+            transform.DORotate(new Vector3(0, 0, 0), ROTATION_ADNIMATION_TÝME).OnComplete(() =>
             {
                 direction = PlayerDirection.Right;
                 playerInputManager.ToggleIsActive();
@@ -100,7 +105,7 @@ public class PlayerMovementManager : MonoBehaviour
         else if (direction == PlayerDirection.Right)
         {
             HORIZONTAL_LIMIT_VALUE = 4;
-            transform.DORotate(new Vector3(0, 0, 0), 2f).OnComplete(() =>
+            transform.DORotate(new Vector3(0, 0, 0), ROTATION_ADNIMATION_TÝME).OnComplete(() =>
             {
                 direction = PlayerDirection.Forward;
                 playerInputManager.ToggleIsActive();

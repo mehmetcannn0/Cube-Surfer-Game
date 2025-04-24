@@ -32,9 +32,7 @@ public class LeaderboardManager : MonoBehaviour
 
     void Start()
     {
-        saveData = SaveData.Instance;
-        //saveData.AddDummyPlayers();
-        saveData.LoadFromJson();
+        saveData = SaveData.Instance; 
         InitializePlayerUIs();
         saveData.LoadFromJson();
         UpdateLeaderboardUI();

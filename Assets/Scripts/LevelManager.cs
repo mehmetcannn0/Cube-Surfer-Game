@@ -22,6 +22,7 @@ public class LevelManager : MonoBehaviour
     public Transform cubesParentOnGround;
     public Canvas canvas;
 
+    PlayerMovementManager playerMovementManager;
     LeaderboardManager leaderboardManager;
     PrefabManager prefabManager;
     GameManager gameManager;
@@ -49,6 +50,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        playerMovementManager = PlayerMovementManager.Instance;
         leaderboardManager = LeaderboardManager.Instance;
         prefabManager = PrefabManager.Instance;
         gameManager = GameManager.Instance;
@@ -58,11 +60,9 @@ public class LevelManager : MonoBehaviour
 
     public void CreateLevel()
     {
-        Vector3 groundForward = Vector3.forward; 
+        Vector3 groundForward = Vector3.forward;
         Vector3 groundLeft = Vector3.left;
-        Vector3 groundRight = Vector3.right;
-        //player = Instantiate(prefabManager.playerPrefab,Vector3.zero,Quaternion.identity);
-
+        Vector3 groundRight = Vector3.right; 
         player.transform.position = Vector3.zero;
         playerVisualTransform.position = Vector3.zero;
         groundlength = ground.transform.localScale.z;
@@ -154,7 +154,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private Vector3 GetObjectPosition(int index, int j, LevelDirection direction, Vector3 startOffset  )
+    private Vector3 GetObjectPosition(int index, int j, LevelDirection direction, Vector3 startOffset)
     {
         int horizontalPosition = -4;
         switch (direction)
@@ -169,6 +169,7 @@ public class LevelManager : MonoBehaviour
                 return Vector3.zero;
         }
     }
+
     private Vector3 GetCoinPosition(int x, int z, LevelDirection direction)
     {
         switch (direction)
@@ -189,9 +190,8 @@ public class LevelManager : MonoBehaviour
         if (gameManager.playerName != "" && gameManager.playerName != null)
         {
             gameManager.StartGame();
-            uiManager.CloseUIs();
-        }
-
+            uiManager.DeactiveUIs();
+        } 
     }
 
     public void NextLevel()
@@ -201,29 +201,26 @@ public class LevelManager : MonoBehaviour
         DestroyObjects(coins);
         Destroy(finishGroupGround);
         CreateLevel();
-        PlayerMovementManager.Instance.RotatePlayer();
-
+        playerMovementManager.RotatePlayer();
         gameManager.NextLevel();
-        uiManager.finishLevelUI.SetActive(false);
-
-
+        uiManager.MakeDeactiveUI(uiManager.finishLevelUI);         
     }
 
     public void FinishLEvel()
     {
-        uiManager.finishLevelUI.SetActive(true);
+        uiManager.MakeActiveUI(uiManager.finishLevelUI);
         gameManager.FinishLevel();
     }
 
     public void GameOver()
     {
-        uiManager.playerNameUI.SetActive(true);
-        uiManager.leaderboardUI.SetActive(true);
+        uiManager.MakeActiveUI(uiManager.playerNameUI);
+        uiManager.MakeActiveUI(uiManager.leaderboardUI);
         SavePlayerData();
         GetAndUpdatePlayersData();
         leaderboardManager.UpdateLeaderboardUI();
-        uiManager.gameOverUI.SetActive(true);
-        GetAndUpdatePlayersData();
+        uiManager.MakeActiveUI(uiManager.gameOverUI);
+        //GetAndUpdatePlayersData();
         gameManager.GameOver();
 
     }
@@ -232,17 +229,19 @@ public class LevelManager : MonoBehaviour
     {
         if (gameManager.playerName != "" && gameManager.playerName != null)
         {
+            playerMovementManager.PlayerDirectionSetForward();
             ClearLevel();
             CreateLevel();
             gameManager.StartGame();
-            uiManager.CloseUIs();
+            uiManager.DeactiveUIs();
         }
     }
+
     private void CreateGround(float localScaleZ)
     {
-
         finishGroupGround = Instantiate(prefabManager.finishGroup, new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15), Quaternion.identity);
     }
+
     private void SavePlayerData()
     {
         Player newPlayer = new Player();
@@ -257,8 +256,6 @@ public class LevelManager : MonoBehaviour
     {
         saveData.LoadFromJson();
     }
-
-
 
     private void ClearLevel()
     {

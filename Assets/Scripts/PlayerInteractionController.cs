@@ -5,10 +5,12 @@ public class PlayerInteractionController : MonoBehaviour
 {
     public Transform cubeParent;
     public Transform playerVisualTransform;
+    private bool isGameOver;
 
     PlayerMovementManager playerMovementManager;
     LevelManager levelManager;
     GameManager gameManager;
+    UIManager uiManager;
 
     public static PlayerInteractionController Instance;
 
@@ -27,15 +29,13 @@ public class PlayerInteractionController : MonoBehaviour
         playerMovementManager = PlayerMovementManager.Instance;
         levelManager = LevelManager.Instance;
         gameManager = GameManager.Instance;
+        uiManager = UIManager.Instance;
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("rotate"))
         {
-            Debug.Log("ground finish");
-
             playerMovementManager.RotatePlayer();
-
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -49,6 +49,17 @@ public class PlayerInteractionController : MonoBehaviour
         Vector3 contactPoint = collision.contacts[0].point;
         Vector3 directionToContact = (contactPoint - transform.position).normalized;
 
+        IsCollisionForward(collision, directionToContact);
+
+        if (collision.gameObject.CompareTag("finish"))
+        {
+            Debug.Log("level finish");
+            levelManager.FinishLEvel();
+        }
+    }
+
+    private void IsCollisionForward(Collision collision, Vector3 directionToContact)
+    {
         if (Vector3.Dot(transform.forward, directionToContact) > 0.7f)
         {
             if (collision.gameObject.TryGetComponent(out IStackable stackable))
@@ -62,13 +73,6 @@ public class PlayerInteractionController : MonoBehaviour
                 OnObstacleInteraction(collision, obstacle);
                 return;
             }
-
-        }
-        if (collision.gameObject.CompareTag("finish"))
-        {
-            Debug.Log("level finish");
-            levelManager.FinishLEvel();
-
         }
     }
 
@@ -84,9 +88,16 @@ public class PlayerInteractionController : MonoBehaviour
         }
         else
         {
-            //Debug.LogError("gameover");
-            levelManager.GameOver();
-
+            Debug.LogError("gameover");
+            if (!isGameOver)
+            {
+                isGameOver = !isGameOver;
+                levelManager.GameOver();
+            }
+            else
+            {
+                isGameOver = !isGameOver;
+            }
         }
     }
 
@@ -94,6 +105,7 @@ public class PlayerInteractionController : MonoBehaviour
     {
         int cubeSize = stackable.OnStack(cubeIndex: 0);
         gameManager.AddScore(cubeSize);
+        uiManager.UpdateScoreUI();
         playerVisualTransform.localPosition = playerVisualTransform.localPosition + (2 * Vector3.up);
         for (int i = 1; i < cubeSize; i++)
         {
@@ -108,14 +120,12 @@ public class PlayerInteractionController : MonoBehaviour
         {
             Transform lowerCube = cubeParent.GetChild(0);
             lowerCube.parent = levelManager.cubesParentOnGround;
-
         }
     }
 
     private void SetNewPosition(Collision collision, int wallSize, int childCount)
     {
         Vector3 playerVisualPosition = playerVisualTransform.localPosition;
-
 
         for (int i = 0; i < childCount - wallSize; i++)
         {
@@ -128,7 +138,8 @@ public class PlayerInteractionController : MonoBehaviour
 
         if (wallSize == childCount)
         {
-            playerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (2 * wallSize)), 2f);
+            transform.position = collision.gameObject.transform.position + Vector3.up;
+            playerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (2 * wallSize)), 1.5f);
             return;
         }
 

@@ -62,7 +62,7 @@ public class PlayerInputManager : MonoBehaviour
 
             if (touch.phase == TouchPhase.Moved)
             {
-                horizontalValue = touch.deltaPosition.x * 15f * Time.deltaTime;
+                horizontalValue = touch.deltaPosition.x * 5f * Time.deltaTime;
             }
             //else
             //{

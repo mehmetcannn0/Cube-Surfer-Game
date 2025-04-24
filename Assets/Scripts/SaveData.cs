@@ -15,12 +15,7 @@ public class SaveData : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    { 
-        LoadFromJson();        
-    }
+    } 
 
     public void SaveToJson()
     {
@@ -46,20 +41,6 @@ public class SaveData : MonoBehaviour
             Debug.Log("Kayýt dosyasý bulunamadý.");
         }
     }
-    public void AddDummyPlayers()
-    {
-        leaderboard.players.Clear();  
-        leaderboard.players.Add(new Player { name = "Alice", gold = 120, score = 1500 });
-        leaderboard.players.Add(new Player { name = "Bob", gold = 90, score = 1200 });
-        leaderboard.players.Add(new Player { name = "Charlie", gold = 300, score = 1700 });
-        leaderboard.players.Add(new Player { name = "Diana", gold = 50, score = 800 });
-        leaderboard.players.Add(new Player { name = "Eve", gold = 200, score = 1000 });
-        Debug.Log(leaderboard.players.Count);
-
-        SaveToJson();  
-    }
-
-
 }
 
 [System.Serializable]

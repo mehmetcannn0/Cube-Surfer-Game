@@ -31,9 +31,7 @@ public class Coin : MonoBehaviour, ICollectable
     {
         CollectCoinAction?.Invoke();
         PlayCoinCollectAnimation();
-        PlayCoinSound();
-
-        //Debug.Log("collected a coin");
+        PlayCoinSound(); 
         Destroy(gameObject);
     }
 
@@ -49,7 +47,6 @@ public class Coin : MonoBehaviour, ICollectable
     private void PlayCoinSound()
     {
         //Debug.Log("PlayCoinSound");
-
     }
 
 }
