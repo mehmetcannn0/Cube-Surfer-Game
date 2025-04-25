@@ -1159,21 +1159,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2041871382083597267, guid: b70266f88668d5d439b00ea1854c07f9,
-        type: 3}
-      propertyPath: direction
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6168034585333274205, guid: b70266f88668d5d439b00ea1854c07f9,
-        type: 3}
-      propertyPath: CubeParent
-      value: 
-      objectReference: {fileID: 1590433818}
-    - target: {fileID: 6168034585333274205, guid: b70266f88668d5d439b00ea1854c07f9,
-        type: 3}
-      propertyPath: PlayerVisualTransform
-      value: 
-      objectReference: {fileID: 1261266951}
     - target: {fileID: 6218328845847847934, guid: b70266f88668d5d439b00ea1854c07f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1229,14 +1214,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7845686928045660361, guid: b70266f88668d5d439b00ea1854c07f9,
+        type: 3}
+      propertyPath: virtualCamera
+      value: 
+      objectReference: {fileID: 1370597171}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7395547865928538786, guid: b70266f88668d5d439b00ea1854c07f9,
-        type: 3}
-      insertIndex: 4
-      addedObject: {fileID: 1117004209}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b70266f88668d5d439b00ea1854c07f9, type: 3}
 --- !u!1 &341369769
 GameObject:
@@ -3890,21 +3876,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 305492530}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1117004209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1117004197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93dad46a4caf6ff49a5479426903a276, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cubeParent: {fileID: 1590433818}
-  lookAtTarget: {fileID: 1016059189}
-  virtualCamera: {fileID: 1370597171}
 --- !u!1 &1133973752
 GameObject:
   m_ObjectHideFlags: 0
@@ -5571,12 +5542,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587602637}
   m_CullTransparentMesh: 1
---- !u!4 &1590433818 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1670618115032341480, guid: b70266f88668d5d439b00ea1854c07f9,
-    type: 3}
-  m_PrefabInstance: {fileID: 305492530}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1598065405
 GameObject:
   m_ObjectHideFlags: 0
