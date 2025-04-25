@@ -43,12 +43,14 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void OnEnable()
     {
-        LevelManager.Instance.OnLevelRestarted += PlayerDirectionSetForward;
+        ActionController.OnLevelRestarted += PlayerDirectionSetForward;
+        ActionController.OnNextLevelStarted += PlayerDirectionSetForward;
     }
 
     private void OnDisable()
     {
-        LevelManager.Instance.OnLevelRestarted -= PlayerDirectionSetForward;        
+        ActionController.OnLevelRestarted -= PlayerDirectionSetForward;
+        ActionController.OnNextLevelStarted -= PlayerDirectionSetForward;
     }
 
     private void FixedUpdate()
@@ -58,10 +60,10 @@ public class PlayerMovementManager : MonoBehaviour
     }
 
     public void PlayerDirectionSetForward()
-    { 
+    {
         horizontalLimitValue = 4;
         transform.DORotate(new Vector3(0, 0, 0), 0.1f);
-        direction= PlayerDirection.Forward; 
+        direction = PlayerDirection.Forward;
     }
     private void PlayerForwardMovement()
     {
@@ -83,10 +85,10 @@ public class PlayerMovementManager : MonoBehaviour
                 newPositionHorizontalValue = transform.position.x + playerInputManager.horizontalValue * horizontalMovementSpeed * Time.fixedDeltaTime;
                 newPositionHorizontalValue = Mathf.Clamp(newPositionHorizontalValue, horizontalLimitValue - 8, horizontalLimitValue);
                 transform.position = new Vector3(newPositionHorizontalValue, transform.position.y, transform.position.z);
-              
+
             }
-        } 
-    } 
+        }
+    }
 
     public void RotatePlayer()
     {

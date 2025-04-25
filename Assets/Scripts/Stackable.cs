@@ -2,6 +2,6 @@
 
 public interface IStackable 
 {
-    int OnStack( );
+    int OnStack();
 
 }

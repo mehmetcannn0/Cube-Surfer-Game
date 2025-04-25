@@ -7,40 +7,37 @@ public class GameManager : MonoSingleton<GameManager>
     public int Score { get; private set; }
     public int Gold { get; private set; }
 
-    PlayerMovementManager playerMovementManager;
-    PlayerInteractionController playerInteractionController;
+    PlayerMovementManager playerMovementManager; 
 
     void Start()
-    {
-        playerInteractionController = PlayerInteractionController.Instance;
+    { 
         playerMovementManager = PlayerMovementManager.Instance;
 
-        playerInteractionController.OnScoreAdded += AddScore;
-        playerInteractionController.OnGameOver += GameOver;
     }
 
     private void OnEnable()
     {
+        ActionController.OnScoreAdded += AddScore;
+        ActionController.OnGameOver += GameOver;
         Coin.OnCoinCollected += IncreaseGold;
      
-        LevelManager.Instance.OnLevelFinished += FinishLevel;
-        LevelManager.Instance.OnLevelRestarted += StartGame;
+        ActionController.OnLevelFinished += FinishLevel;
+        ActionController.OnLevelRestarted += StartGame;
+        ActionController.OnNextLevelStarted += NextLevel;
     }
 
     private void OnDisable()
     {
         Coin.OnCoinCollected -= IncreaseGold;
 
-        LevelManager.Instance.OnLevelFinished -= FinishLevel;
-        LevelManager.Instance.OnLevelRestarted -= StartGame;
+        ActionController.OnLevelFinished -= FinishLevel;
+        ActionController.OnLevelRestarted -= StartGame;
+        ActionController.OnScoreAdded -= AddScore;
+        ActionController.OnGameOver -= GameOver;
+        ActionController.OnNextLevelStarted -= NextLevel;
     }
 
-    private void OnDestroy()
-    {
-        playerInteractionController.OnScoreAdded -= AddScore;
-        playerInteractionController.OnGameOver -= GameOver;
-    }
-
+ 
     public void StartGame()
     {
         Gold = 0;

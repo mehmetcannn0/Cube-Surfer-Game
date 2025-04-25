@@ -19,16 +19,16 @@ public class LevelManager : MonoSingleton<LevelManager>
     [SerializeField] Transform coinsParents;
     [SerializeField] Transform playerVisualTransform;
 
-    public Transform CubesParentOnGround; 
- 
+    public Transform CubesParentOnGround;
+
     PrefabManager prefabManager;
     GameManager gameManager;
-    GameObject finishGroupGround; 
+    GameObject finishGroupGround;
     SaveData saveData;
 
-    public Action OnNextLevelStarted;
-    public Action OnLevelRestarted;
-    public Action OnLevelFinished;
+    //public Action OnNextLevelStarted;
+    //public Action OnLevelRestarted;
+    //public Action OnLevelFinished;
 
     //public Action OnGameOver; 
 
@@ -40,9 +40,9 @@ public class LevelManager : MonoSingleton<LevelManager>
     }
 
     private void Start()
-    {   
+    {
         prefabManager = PrefabManager.Instance;
-        gameManager = GameManager.Instance; 
+        gameManager = GameManager.Instance;
         saveData = SaveData.Instance;
         CreateLevel();
     }
@@ -50,23 +50,27 @@ public class LevelManager : MonoSingleton<LevelManager>
     private void OnEnable()
     {
         //PlayerInteractionController.Instance.OnGameOver += GameOver;
- 
-        OnLevelRestarted += ClearLevel;
-        OnLevelRestarted += CreateLevel;
+
+        ActionController.OnLevelRestarted += ClearLevel;
+        ActionController.OnLevelRestarted += CreateLevel;
+        ActionController.OnNextLevelStarted += ClearLevel;
+        ActionController.OnNextLevelStarted += CreateLevel;
     }
 
     private void OnDisable()
     {
         //PlayerInteractionController.Instance.OnGameOver -= GameOver; 
-        OnLevelRestarted -= ClearLevel;
-        OnLevelRestarted -= CreateLevel;
-    } 
+        ActionController.OnLevelRestarted -= ClearLevel;
+        ActionController.OnLevelRestarted -= CreateLevel;
+        ActionController.OnNextLevelStarted -= ClearLevel;
+        ActionController.OnNextLevelStarted -= CreateLevel;
+    }
 
     public void CreateLevel()
     {
         Vector3 groundForward = Vector3.forward;
         Vector3 groundLeft = Vector3.left;
-        Vector3 groundRight = Vector3.right; 
+        Vector3 groundRight = Vector3.right;
         player.transform.position = Vector3.zero;
         playerVisualTransform.position = Vector3.zero;
         groundlength = ground.transform.localScale.z;
@@ -95,21 +99,22 @@ public class LevelManager : MonoSingleton<LevelManager>
     }
 
     private void CreateCube(int index, LevelDirection direction, Vector3 startOffset)
-    { 
+    {
         for (int j = 0; j < 5; j++)
         {
             int randomCubeSize = UnityEngine.Random.Range(0, 4);
             if (randomCubeSize == 0) continue;
 
-            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset); 
+            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset);
             CubeTower cubeTower = prefabManager.InstantiateObjet(prefabType: PrefabType.CubeTower, objectPosition: basePos, parent: CubesParentOnGround).GetComponent<CubeTower>();
-             
-              cubeTower.CubeSize = randomCubeSize;
+
+            cubeTower.CubeSize = randomCubeSize;
+            cubes.Add(cubeTower.gameObject);
 
             for (int k = 0; k < randomCubeSize; k++)
             {
                 Vector3 stackPos = basePos + Vector3.up * k * 2;
-                GameObject cube = prefabManager. InstantiateObjet(prefabType:PrefabType.Cube, objectPosition: stackPos , parent:cubeTower.transform);
+                GameObject cube = prefabManager.InstantiateObjet(prefabType: PrefabType.Cube, objectPosition: stackPos, parent: cubeTower.transform);
                 cubeTower.CubeList.Add(cube);
                 cubes.Add(cube);
             }
@@ -123,7 +128,7 @@ public class LevelManager : MonoSingleton<LevelManager>
         {
             int randomWallSize = UnityEngine.Random.Range(1, 4);
 
-            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset); 
+            Vector3 basePos = GetObjectPosition(index, j, direction, startOffset);
             GameObject wallTower = prefabManager.InstantiateObjet(prefabType: PrefabType.WallTower, objectPosition: basePos, parent: wallsParents);
             wallTower.GetComponent<WallTower>().wallSize = randomWallSize;
 
@@ -131,7 +136,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             for (int k = 0; k < randomWallSize; k++)
             {
-                Vector3 stackPos = basePos + Vector3.up * k * 2; 
+                Vector3 stackPos = basePos + Vector3.up * k * 2;
                 GameObject wall = prefabManager.InstantiateObjet(prefabType: PrefabType.Wall, objectPosition: stackPos, parent: wallTower.transform);
 
                 walls.Add(wall);
@@ -150,7 +155,7 @@ public class LevelManager : MonoSingleton<LevelManager>
                 randomZ = UnityEngine.Random.Range(0, (int)groundlength);
             } while (randomZ % 10 == 0);
 
-            Vector3 spawnPosition = GetCoinPosition(randomX, randomZ, direction); 
+            Vector3 spawnPosition = GetCoinPosition(randomX, randomZ, direction);
             GameObject newCoin = prefabManager.InstantiateObjet(prefabType: PrefabType.Coin, objectPosition: spawnPosition, parent: coinsParents);
 
             coins.Add(newCoin);
@@ -189,10 +194,10 @@ public class LevelManager : MonoSingleton<LevelManager>
     }
 
     private void CreateGround(float localScaleZ)
-    { 
-          finishGroupGround = prefabManager.InstantiateObjet(prefabType: PrefabType.FinishGroup, objectPosition: new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15));
+    {
+        finishGroupGround = prefabManager.InstantiateObjet(prefabType: PrefabType.FinishGroup, objectPosition: new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15));
     }
-     
+
     public void NextLevel()
     {
         DestroyObjects(walls);
@@ -201,12 +206,11 @@ public class LevelManager : MonoSingleton<LevelManager>
         Destroy(finishGroupGround);
 
         CreateLevel();
-
-        OnNextLevelStarted?.Invoke();   
+        ActionController.OnNextLevelStarted?.Invoke(); 
     }
-     
 
-    
+
+
     private void ClearLevel()
     {
         DestroyObjects(walls);
@@ -225,3 +229,9 @@ public class LevelManager : MonoSingleton<LevelManager>
     }
 }
 
+public static partial class ActionController
+{
+    public static Action OnNextLevelStarted;
+    public static Action OnLevelRestarted;
+    public static Action OnLevelFinished;
+}

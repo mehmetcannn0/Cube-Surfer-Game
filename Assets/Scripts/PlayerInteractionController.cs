@@ -2,19 +2,27 @@ using DG.Tweening;
 using System;
 using UnityEngine;
 
-public class PlayerInteractionController : MonoSingleton<PlayerInteractionController>
+public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerInteractionController>
 {
     public Transform CubeParent;
     public Transform PlayerVisualTransform;
     private bool isGameOver;
 
-    LevelManager levelManager; 
+    LevelManager levelManager;
 
     public static PlayerInteractionController Instance;
 
-    public event Action<int> OnScoreAdded;
-    public event Action OnGameOver;
-
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     private void Start()
     {
         levelManager = LevelManager.Instance;
@@ -34,7 +42,7 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectable))
         {
-            collectable.Collect(); 
+            collectable.Collect();
         }
 
         Vector3 contactPoint = collision.contacts[0].point;
@@ -43,13 +51,13 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
         IsCollisionForward(collision, directionToContact);
 
         if (collision.gameObject.TryGetComponent(out IFinishLevel finishLevel))//interface
-        { 
+        {
             finishLevel.FinishLevel();
         }
     }
 
     private void IsCollisionForward(Collision collision, Vector3 directionToContact)
-    { 
+    {
         if (Vector3.Dot(transform.forward, directionToContact) > 0.7f)
         {
             if (collision.gameObject.TryGetComponent(out IStackable stackable))
@@ -63,7 +71,7 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
                 OnObstacleInteraction(collision, obstacle);
                 return;
             }
-        }  
+        }
     }
 
     private void OnObstacleInteraction(Collision collision, IObstacle obstacle)
@@ -77,12 +85,12 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
             SetNewPosition(collision, wallSize, childCount);
         }
         else
-        { 
+        {
             if (!isGameOver)
             {
                 isGameOver = !isGameOver;
                 SaveData.Instance.SavePlayerData();
-                OnGameOver?.Invoke();
+                ActionController.OnGameOver?.Invoke();
             }
             else
             {
@@ -90,14 +98,17 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
             }
         }
     }
+     
 
     private void OnStackableInteraction(IStackable stackable)
     {
-        int cubeSize = stackable.OnStack();
         
+        int cubeSize = stackable.OnStack();
+        ActionController.OnScoreAdded?.Invoke(cubeSize);
+
+
         PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (2 * cubeSize * Vector3.up);
 
-        OnScoreAdded?.Invoke(cubeSize);
     }
 
     private void PushCubesInCubesParent(int wallSize)
@@ -127,10 +138,16 @@ public class PlayerInteractionController : MonoSingleton<PlayerInteractionContro
             transform.position = collision.gameObject.transform.position + Vector3.up;
 
             PlayerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (2 * wallSize)), 1.5f);
-            
+
             return;
         }
 
         PlayerVisualTransform.localPosition += 2 * Vector3.down * wallSize;
     }
+}
+
+public static partial class ActionController
+{
+    public static Action OnGameOver;
+    public static Action<int> OnScoreAdded;
 }

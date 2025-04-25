@@ -39,13 +39,13 @@ public class LeaderboardManager : MonoBehaviour
     }
     private void OnEnable()
     {
-        PlayerInteractionController.Instance.OnGameOver += UpdateLeaderboardUI;
+        ActionController.OnGameOver += UpdateLeaderboardUI;
     }
 
     private void OnDisable()
     {
 
-        PlayerInteractionController.Instance.OnGameOver -= UpdateLeaderboardUI;        
+        ActionController.OnGameOver -= UpdateLeaderboardUI;        
     }
     void InitializePlayerUIs()
     {

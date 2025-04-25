@@ -28,7 +28,7 @@ public class LevelController : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(gameManager.PlayerName))
         {
-            levelManager.OnLevelRestarted?.Invoke();
+            ActionController. OnLevelRestarted?.Invoke();
         }
         else
         {

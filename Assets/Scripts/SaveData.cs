@@ -1,4 +1,5 @@
 using DG.Tweening.Core.Easing;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,15 +22,19 @@ public class SaveData : MonoBehaviour
     private void Start()
     {
         gameManager = GameManager.Instance;
+        ActionController.OnGameOver += LoadFromJson;
     }
     private void OnEnable()
     { 
-        PlayerInteractionController.Instance.OnGameOver += LoadFromJson;
     }
     private void OnDisable()
     { 
-        PlayerInteractionController.Instance.OnGameOver -= LoadFromJson;
         
+    }
+    private void OnDestroy()
+    {
+        ActionController.OnGameOver -= LoadFromJson;
+
     }
     public void SaveToJson()
     {
@@ -80,3 +85,5 @@ public class Player
     public int gold;
     public int score;
 }
+
+ 

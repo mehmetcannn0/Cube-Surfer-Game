@@ -17,7 +17,7 @@ public class UIManager : MonoSingleton<UIManager>
     public GameObject PopUpUI;
     public Canvas canvas;
     public RectTransform targetCoinUI;
- 
+
 
     GameManager gameManager;
 
@@ -29,24 +29,30 @@ public class UIManager : MonoSingleton<UIManager>
     private void OnEnable()
     {
         Coin.OnCoinCollected += UpdateGoldUI;
-        PlayerInteractionController.Instance.OnScoreAdded += UpdateScoreUI;
-        LevelManager.Instance.OnLevelFinished += CloseFinishUI;
-        PlayerInteractionController.Instance.OnGameOver += OpenGameOverUIs;
+        ActionController.OnScoreAdded += UpdateScoreUI;
+        //ActionController.OnLevelFinished += CloseFinishUI;
+        ActionController.OnLevelFinished += OpenFinishUI;
+        ActionController.OnGameOver += OpenGameOverUIs;
         ActionController.OnLevelStart += DeactiveUIs;
-        LevelManager.Instance.OnLevelRestarted += DeactiveUIs;
-        ActionController. OnPopUpOpened += OpenPopUp;
+        ActionController.OnLevelRestarted += DeactiveUIs;
+        ActionController.OnPopUpOpened += OpenPopUp;
+        ActionController.OnNextLevelStarted += CloseFinishUI ;
 
     }
 
     private void OnDisable()
     {
         Coin.OnCoinCollected -= UpdateGoldUI;
-        PlayerInteractionController.Instance.OnScoreAdded -= UpdateScoreUI;
-        LevelManager.Instance.OnLevelFinished -= CloseFinishUI;
-        PlayerInteractionController.Instance.OnGameOver -= OpenGameOverUIs;
+        ActionController.OnScoreAdded -= UpdateScoreUI;
+        //ActionController.OnLevelFinished -= CloseFinishUI;
+        ActionController.OnLevelFinished -= OpenFinishUI;
+
+        ActionController.OnGameOver -= OpenGameOverUIs;
         ActionController.OnLevelStart -= DeactiveUIs;
-        LevelManager.Instance.OnLevelRestarted -= DeactiveUIs;
+        ActionController.OnLevelRestarted -= DeactiveUIs;
         ActionController.OnPopUpOpened -= OpenPopUp;
+        ActionController.OnNextLevelStarted -= CloseFinishUI ;
+
 
     }
 
@@ -64,6 +70,10 @@ public class UIManager : MonoSingleton<UIManager>
     {
         finishLevelUI.SetActive(false);
     }
+    public void OpenFinishUI()
+    {
+        finishLevelUI.SetActive(true);
+    }
     public void OpenGameOverUIs()
     {
         gameOverUI.SetActive(true);
@@ -76,13 +86,13 @@ public class UIManager : MonoSingleton<UIManager>
     /// </summary>
     public void DeactiveUIs()
     {
-        Debug.Log("DeactiveUIs");
+        //Debug.Log("DeactiveUIs");
         startUI.SetActive(false);
         finishLevelUI.SetActive(false);
         playerNameUI.SetActive(false);
         leaderboardUI.SetActive(false);
         gameOverUI.SetActive(false);
-        UpdateScoreUI(0);
+        UpdateScoreUI(gameManager.Score);
         UpdateGoldUI();
     }
 
@@ -97,13 +107,13 @@ public class UIManager : MonoSingleton<UIManager>
     }
     public void OpenPopUp()
     {
-        Debug.Log(" pop up");
+        //Debug.Log(" pop up");
         StopAllCoroutines();
-        PopUpUI.transform.localScale = Vector3.zero;  
+        PopUpUI.transform.localScale = Vector3.zero;
         PopUpUI.SetActive(true);
         PopUpUI.transform.DOScale(1, 0.5f).OnComplete(() =>
         {
-            StartCoroutine(ClosePopUpAfterDelay(2f));  
+            StartCoroutine(ClosePopUpAfterDelay(2f));
         });
     }
 
@@ -112,7 +122,7 @@ public class UIManager : MonoSingleton<UIManager>
         yield return new WaitForSeconds(delay);
         PopUpUI.transform.DOScale(0, 0.5f).OnComplete(() =>
         {
-            PopUpUI.SetActive(false);  
+            PopUpUI.SetActive(false);
         });
     }
 
