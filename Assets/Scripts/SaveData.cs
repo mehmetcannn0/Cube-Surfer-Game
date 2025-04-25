@@ -1,8 +1,10 @@
+using DG.Tweening.Core.Easing;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SaveData : MonoBehaviour
 { 
+    GameManager gameManager;    
     public Leaderboard leaderboard = new Leaderboard();
     public static SaveData Instance;
 
@@ -15,12 +17,24 @@ public class SaveData : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    } 
-
+    }
+    private void Start()
+    {
+        gameManager = GameManager.Instance;
+    }
+    private void OnEnable()
+    { 
+        PlayerInteractionController.Instance.OnGameOver += LoadFromJson;
+    }
+    private void OnDisable()
+    { 
+        PlayerInteractionController.Instance.OnGameOver -= LoadFromJson;
+        
+    }
     public void SaveToJson()
     {
         string leaderboardData = JsonUtility.ToJson(leaderboard,true);
-        Debug.Log("string "  + leaderboardData);
+        //Debug.Log("string "  + leaderboardData);
         string filePath = Application.persistentDataPath + "/PlayerData.json";
         System.IO.File.WriteAllText(filePath, leaderboardData);
         Debug.Log("data kaydedýldý"); 
@@ -41,6 +55,16 @@ public class SaveData : MonoBehaviour
             Debug.Log("Kayýt dosyasý bulunamadý.");
         }
     }
+    public void SavePlayerData()
+    {
+        Player newPlayer = new Player();
+        newPlayer.name = gameManager.PlayerName;
+        newPlayer.score = gameManager.Score;
+        newPlayer.gold = gameManager.Gold;
+        leaderboard.players.Add(newPlayer);
+        SaveToJson();
+    }
+
 }
 
 [System.Serializable]

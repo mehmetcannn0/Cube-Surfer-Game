@@ -37,7 +37,16 @@ public class LeaderboardManager : MonoBehaviour
         saveData.LoadFromJson();
         UpdateLeaderboardUI();
     }
+    private void OnEnable()
+    {
+        PlayerInteractionController.Instance.OnGameOver += UpdateLeaderboardUI;
+    }
 
+    private void OnDisable()
+    {
+
+        PlayerInteractionController.Instance.OnGameOver -= UpdateLeaderboardUI;        
+    }
     void InitializePlayerUIs()
     {
         playerUIList.Clear();

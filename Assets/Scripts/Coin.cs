@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour, ICollectable
 {
-    public static event Action CollectCoinAction;
+    public static event Action OnCoinCollected;
 
     PrefabManager prefabManager;
-    LevelManager levelManager;
-    
+    UIManager uiManager;
+
     private void Awake()
     {
-        levelManager = LevelManager.Instance;
         prefabManager = PrefabManager.Instance;
+        uiManager = UIManager.Instance;
     }
 
     private void Start()
@@ -29,18 +29,20 @@ public class Coin : MonoBehaviour, ICollectable
 
     public void Collect()
     {
-        CollectCoinAction?.Invoke();
+        OnCoinCollected?.Invoke();
         PlayCoinCollectAnimation();
-        PlayCoinSound(); 
+        PlayCoinSound();
         Destroy(gameObject);
     }
 
     public void PlayCoinCollectAnimation()
     {
-        RectTransform animatedCoin = Instantiate(prefabManager.coinUIPrefab, levelManager.canvas.transform);
+        GameObject animatedCoinUI = prefabManager.InstantiateObjet(prefabType: PrefabType.CoinUI, objectPosition: Vector3.zero, parent: uiManager.canvas.transform);
+
+        RectTransform animatedCoin = animatedCoinUI.GetComponent<RectTransform>();
         animatedCoin.anchoredPosition3D = Vector3.zero;
 
-        animatedCoin.DOMove(levelManager.targetCoinUI.position, 0.8f)
+        animatedCoin.DOMove(uiManager.targetCoinUI.position, 0.8f)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() => Destroy(animatedCoin.gameObject));
     }

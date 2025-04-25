@@ -1,60 +1,60 @@
+using System;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleton<GameManager>
 {
-    public string playerName { get; private set; }
-    public int score { get; private set; }
+    public string PlayerName { get; private set; }
+    public int Score { get; private set; }
+    public int Gold { get; private set; }
 
     PlayerMovementManager playerMovementManager;
-    LevelManager levelManager;
-    public int gold { get; private set; }
+    PlayerInteractionController playerInteractionController;
 
-    public static GameManager Instance;
-
-    private void Awake()
+    void Start()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        playerInteractionController = PlayerInteractionController.Instance;
+        playerMovementManager = PlayerMovementManager.Instance;
+
+        playerInteractionController.OnScoreAdded += AddScore;
+        playerInteractionController.OnGameOver += GameOver;
     }
 
     private void OnEnable()
     {
-        Coin.CollectCoinAction += IncreaseGold;
+        Coin.OnCoinCollected += IncreaseGold;
+     
+        LevelManager.Instance.OnLevelFinished += FinishLevel;
+        LevelManager.Instance.OnLevelRestarted += StartGame;
     }
 
     private void OnDisable()
     {
-        Coin.CollectCoinAction -= IncreaseGold;
+        Coin.OnCoinCollected -= IncreaseGold;
+
+        LevelManager.Instance.OnLevelFinished -= FinishLevel;
+        LevelManager.Instance.OnLevelRestarted -= StartGame;
     }
 
-    void Start()
+    private void OnDestroy()
     {
-        playerMovementManager = PlayerMovementManager.Instance;
-        levelManager = LevelManager.Instance;
-        levelManager.CreateLevel();
-
+        playerInteractionController.OnScoreAdded -= AddScore;
+        playerInteractionController.OnGameOver -= GameOver;
     }
 
     public void StartGame()
     {
-        gold = 0;
-        score = 0;
-        Debug.Log("start game");
+        Gold = 0;
+        Score = 0; 
         playerMovementManager.RunPlayer();
     }
 
     public void IncreaseGold()
     {
-        gold++;
+        Gold++;
     }
     public void AddScore(int addScore)
-    {
-        score += addScore;
+    {     
+        Score += addScore;
     }
 
     public void FinishLevel()
@@ -69,9 +69,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void GameOver()
-    {
+    { 
         playerMovementManager.StopPlayer();
-
     }
 
     public void RestartGame()
@@ -80,8 +79,9 @@ public class GameManager : MonoBehaviour
     }
     public void UpdatePlayerName(string value)
     {
-        playerName = value;
+        PlayerName = value;
         //Debug.Log("NickName: " + playerName);
     }
 
 }
+ 
