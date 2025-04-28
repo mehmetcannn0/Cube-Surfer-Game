@@ -1,7 +1,4 @@
- 
-
-public interface IStackable 
+public interface IStackable
 {
     int OnStack();
-
 }

@@ -4,11 +4,11 @@ using UnityEngine;
 public class CubeTower : MonoBehaviour, IStackable
 {
     private BoxCollider cubeTowerBoxCollider;
+
     public List<GameObject> CubeList;
     public int CubeSize;
 
     PlayerInteractionController playerInteractionController;
-
 
     private void Start()
     {
@@ -16,9 +16,8 @@ public class CubeTower : MonoBehaviour, IStackable
         playerInteractionController = PlayerInteractionController.Instance;
     }
 
-    public int OnStack( )
+    public int OnStack()
     {
-         
         cubeTowerBoxCollider.enabled = false;
         for (int i = 0; i < CubeSize; i++)
         {
@@ -27,5 +26,4 @@ public class CubeTower : MonoBehaviour, IStackable
         }
         return CubeSize;
     }
-
 }

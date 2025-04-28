@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class PlayerInputManager : MonoBehaviour
 {
-    public float horizontalValue { get; private set; }
+    public float HorizontalValue { get; private set; }
+    public bool IsActive { get; private set; }
 
     public static PlayerInputManager Instance;
-    public bool isActive { get; private set; }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -29,24 +29,24 @@ public class PlayerInputManager : MonoBehaviour
 
     private void HandleHeroHorizontalInput()
     {
-        if (Input.touchCount > 0 && isActive)
+        if (Input.touchCount > 0 && IsActive)
         {
             Touch touch = Input.GetTouch(0);
 
             if (touch.phase == TouchPhase.Moved)
             {
-                horizontalValue = touch.deltaPosition.x * 15f * Time.deltaTime;
+                HorizontalValue = touch.deltaPosition.x * 15f * Time.deltaTime;
             }
         }
         else
         {
-            horizontalValue = 0;
+            HorizontalValue = 0;
         }
     }
 
     public void ToggleIsActive()
     {
-        isActive = !isActive;
+        IsActive = !IsActive;
         //Debug.Log("isActive " + isActive);
     }
 }

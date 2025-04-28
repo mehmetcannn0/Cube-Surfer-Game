@@ -5,11 +5,17 @@ public class PlayerMovementManager : MonoBehaviour
 {
     [SerializeField] float forwardMovementSpeed = 0;
 
-    private float horizontalLimitValue = 4;
-    private float horizontalMovementSpeed = 0;
     private const float ROTATION_ANIMATION_TÝME = 1f;
 
+    private float horizontalLimitValue = 4;
+    private float horizontalMovementSpeed = 0;
     private float newPositionHorizontalValue;
+
+    public PlayerDirection Direction;
+
+    PlayerInputManager playerInputManager;
+
+    public static PlayerMovementManager Instance;
 
     public enum PlayerDirection
     {
@@ -17,12 +23,6 @@ public class PlayerMovementManager : MonoBehaviour
         Left,
         Right
     }
-
-    public PlayerDirection direction;
-
-    PlayerInputManager playerInputManager;
-
-    public static PlayerMovementManager Instance;
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class PlayerMovementManager : MonoBehaviour
     private void Start()
     {
         playerInputManager = PlayerInputManager.Instance;
-        direction = PlayerDirection.Forward;
+        Direction = PlayerDirection.Forward;
     }
 
     private void OnEnable()
@@ -63,7 +63,7 @@ public class PlayerMovementManager : MonoBehaviour
     {
         horizontalLimitValue = 4;
         transform.DORotate(new Vector3(0, 0, 0), 0.1f);
-        direction = PlayerDirection.Forward;
+        Direction = PlayerDirection.Forward;
     }
     private void PlayerForwardMovement()
     {
@@ -72,17 +72,17 @@ public class PlayerMovementManager : MonoBehaviour
 
     public void PlayerHorizontalMovement()
     {
-        if (playerInputManager.isActive)
+        if (playerInputManager.IsActive)
         {
-            if (direction == PlayerDirection.Left)
+            if (Direction == PlayerDirection.Left)
             {
-                newPositionHorizontalValue = transform.position.z + playerInputManager.horizontalValue * horizontalMovementSpeed * Time.fixedDeltaTime;
+                newPositionHorizontalValue = transform.position.z + playerInputManager.HorizontalValue * horizontalMovementSpeed * Time.fixedDeltaTime;
                 newPositionHorizontalValue = Mathf.Clamp(newPositionHorizontalValue, horizontalLimitValue - 8, horizontalLimitValue);
                 transform.position = new Vector3(transform.position.x, transform.position.y, newPositionHorizontalValue);
             }
             else
             {
-                newPositionHorizontalValue = transform.position.x + playerInputManager.horizontalValue * horizontalMovementSpeed * Time.fixedDeltaTime;
+                newPositionHorizontalValue = transform.position.x + playerInputManager.HorizontalValue * horizontalMovementSpeed * Time.fixedDeltaTime;
                 newPositionHorizontalValue = Mathf.Clamp(newPositionHorizontalValue, horizontalLimitValue - 8, horizontalLimitValue);
                 transform.position = new Vector3(newPositionHorizontalValue, transform.position.y, transform.position.z);
 
@@ -94,34 +94,34 @@ public class PlayerMovementManager : MonoBehaviour
     {
         playerInputManager.ToggleIsActive();
 
-        if (direction == PlayerDirection.Forward)
+        if (Direction == PlayerDirection.Forward)
         {
             horizontalLimitValue = 362;
             transform.DORotate(new Vector3(0, -90, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
-                direction = PlayerDirection.Left;
+                Direction = PlayerDirection.Left;
                 playerInputManager.ToggleIsActive();
 
             });
 
         }
-        else if (direction == PlayerDirection.Left)
+        else if (Direction == PlayerDirection.Left)
         {
             horizontalLimitValue = -354;
             transform.DORotate(new Vector3(0, 0, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
-                direction = PlayerDirection.Right;
+                Direction = PlayerDirection.Right;
                 playerInputManager.ToggleIsActive();
 
             });
 
         }
-        else if (direction == PlayerDirection.Right)
+        else if (Direction == PlayerDirection.Right)
         {
             horizontalLimitValue = 4;
             transform.DORotate(new Vector3(0, 0, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
-                direction = PlayerDirection.Forward;
+                Direction = PlayerDirection.Forward;
                 playerInputManager.ToggleIsActive();
 
             });

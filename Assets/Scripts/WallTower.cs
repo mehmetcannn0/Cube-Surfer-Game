@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class WallTower : MonoBehaviour,IObstacle
+public class WallTower : MonoBehaviour, IObstacle
 {
-  public  int wallSize;
+    public int WallSize;
     public int OnHit()
     {
-        return wallSize;
+        return WallSize;
 
     }
 

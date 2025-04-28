@@ -12,7 +12,6 @@ public class GameManager : MonoSingleton<GameManager>
     void Start()
     { 
         playerMovementManager = PlayerMovementManager.Instance;
-
     }
 
     private void OnEnable()
@@ -37,7 +36,6 @@ public class GameManager : MonoSingleton<GameManager>
         ActionController.OnNextLevelStarted -= NextLevel;
     }
 
- 
     public void StartGame()
     {
         Gold = 0;
@@ -49,6 +47,7 @@ public class GameManager : MonoSingleton<GameManager>
     {
         Gold++;
     }
+
     public void AddScore(int addScore)
     {     
         Score += addScore;
@@ -77,8 +76,6 @@ public class GameManager : MonoSingleton<GameManager>
     public void UpdatePlayerName(string value)
     {
         PlayerName = value;
-        //Debug.Log("NickName: " + playerName);
     }
-
 }
  

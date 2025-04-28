@@ -42,13 +42,13 @@ public class Coin : MonoBehaviour, ICollectable
         RectTransform animatedCoin = animatedCoinUI.GetComponent<RectTransform>();
         animatedCoin.anchoredPosition3D = Vector3.zero;
 
-        animatedCoin.DOMove(uiManager.targetCoinUI.position, 0.8f)
+        animatedCoin.DOMove(uiManager.TargetCoinUI.position, 0.8f)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() => Destroy(animatedCoin.gameObject));
     }
+
     private void PlayCoinSound()
     {
         //Debug.Log("PlayCoinSound");
     }
-
 }

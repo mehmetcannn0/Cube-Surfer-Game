@@ -1,12 +1,10 @@
-using DG.Tweening.Core.Easing;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SaveData : MonoBehaviour
-{ 
-    GameManager gameManager;    
-    public Leaderboard leaderboard = new Leaderboard();
+{
+    GameManager gameManager;
+    public Leaderboard Leaderboard = new Leaderboard();
     public static SaveData Instance;
 
     private void Awake()
@@ -24,13 +22,7 @@ public class SaveData : MonoBehaviour
         gameManager = GameManager.Instance;
         ActionController.OnGameOver += LoadFromJson;
     }
-    private void OnEnable()
-    { 
-    }
-    private void OnDisable()
-    { 
-        
-    }
+ 
     private void OnDestroy()
     {
         ActionController.OnGameOver -= LoadFromJson;
@@ -38,11 +30,11 @@ public class SaveData : MonoBehaviour
     }
     public void SaveToJson()
     {
-        string leaderboardData = JsonUtility.ToJson(leaderboard,true);
+        string leaderboardData = JsonUtility.ToJson(Leaderboard, true);
         //Debug.Log("string "  + leaderboardData);
         string filePath = Application.persistentDataPath + "/PlayerData.json";
         System.IO.File.WriteAllText(filePath, leaderboardData);
-        Debug.Log("data kaydedýldý"); 
+        Debug.Log("data kaydedýldý");
         //Debug.Log(filePath);
     }
 
@@ -52,7 +44,7 @@ public class SaveData : MonoBehaviour
         if (System.IO.File.Exists(filePath))
         {
             string jsonData = System.IO.File.ReadAllText(filePath);
-            leaderboard = JsonUtility.FromJson<Leaderboard>(jsonData); 
+            Leaderboard = JsonUtility.FromJson<Leaderboard>(jsonData);
             Debug.Log("data çekildi");
         }
         else
@@ -66,7 +58,7 @@ public class SaveData : MonoBehaviour
         newPlayer.name = gameManager.PlayerName;
         newPlayer.score = gameManager.Score;
         newPlayer.gold = gameManager.Gold;
-        leaderboard.players.Add(newPlayer);
+        Leaderboard.players.Add(newPlayer);
         SaveToJson();
     }
 
@@ -86,4 +78,3 @@ public class Player
     public int score;
 }
 
- 

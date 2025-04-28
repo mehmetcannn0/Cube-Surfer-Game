@@ -4,18 +4,16 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Transform cubeParent;
-
     [SerializeField] Transform lookAtTarget;
+    [SerializeField] CinemachineVirtualCamera virtualCamera;
+
     private float baseLookAtY = 3f;
     private float yPerCube = 0.6f;
     private float maxLookAtY = 35f;
 
-    [SerializeField] CinemachineVirtualCamera virtualCamera;
     private float baseCameraZ = -16f;
     private float zPerCube = -0.8f;
     private float minCameraZ = -55f;
-
-
 
     private void LateUpdate()
     {

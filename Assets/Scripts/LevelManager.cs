@@ -12,6 +12,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     private List<GameObject> walls = new List<GameObject>();
     private List<GameObject> cubes = new List<GameObject>();
     private List<GameObject> coins = new List<GameObject>();
+    private GameObject finishGroupGround;
 
     [SerializeField] GameObject player;
     [SerializeField] Transform ground;
@@ -19,12 +20,9 @@ public class LevelManager : MonoSingleton<LevelManager>
     [SerializeField] Transform coinsParents;
     [SerializeField] Transform playerVisualTransform;
 
-    public Transform CubesParentOnGround;
-
     PrefabManager prefabManager;
-    GameManager gameManager;
-    GameObject finishGroupGround;
-    SaveData saveData;
+
+    public Transform CubesParentOnGround;
 
     //public Action OnNextLevelStarted;
     //public Action OnLevelRestarted;
@@ -42,15 +40,12 @@ public class LevelManager : MonoSingleton<LevelManager>
     private void Start()
     {
         prefabManager = PrefabManager.Instance;
-        gameManager = GameManager.Instance;
-        saveData = SaveData.Instance;
         CreateLevel();
     }
 
     private void OnEnable()
     {
         //PlayerInteractionController.Instance.OnGameOver += GameOver;
-
         ActionController.OnLevelRestarted += ClearLevel;
         ActionController.OnLevelRestarted += CreateLevel;
         ActionController.OnNextLevelStarted += ClearLevel;
@@ -130,7 +125,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             Vector3 basePos = GetObjectPosition(index, j, direction, startOffset);
             GameObject wallTower = prefabManager.InstantiateObjet(prefabType: PrefabType.WallTower, objectPosition: basePos, parent: wallsParents);
-            wallTower.GetComponent<WallTower>().wallSize = randomWallSize;
+            wallTower.GetComponent<WallTower>().WallSize = randomWallSize;
 
             walls.Add(wallTower);
 
@@ -198,20 +193,8 @@ public class LevelManager : MonoSingleton<LevelManager>
         finishGroupGround = prefabManager.InstantiateObjet(prefabType: PrefabType.FinishGroup, objectPosition: new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15));
     }
 
-    public void NextLevel()
-    {
-        DestroyObjects(walls);
-        DestroyObjects(cubes);
-        DestroyObjects(coins);
-        Destroy(finishGroupGround);
 
-        CreateLevel();
-        ActionController.OnNextLevelStarted?.Invoke(); 
-    }
-
-
-
-    private void ClearLevel()
+    public void ClearLevel()
     {
         DestroyObjects(walls);
         DestroyObjects(cubes);

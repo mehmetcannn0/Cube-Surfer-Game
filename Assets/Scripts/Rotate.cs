@@ -1,6 +1,4 @@
- 
-
-public  interface IRotate 
+public interface IRotate
 {
     void RotatePlayer();
 }

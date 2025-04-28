@@ -1,3 +1,4 @@
 public interface IFinishLevel
-{    void FinishLevel();
+{
+    void FinishLevel();
 }

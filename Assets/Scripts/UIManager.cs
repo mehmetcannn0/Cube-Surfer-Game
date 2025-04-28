@@ -10,13 +10,13 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] TextMeshProUGUI scoreUI;
 
     [SerializeField] GameObject startUI;
-    public GameObject finishLevelUI;
-    public GameObject leaderboardUI;
-    public GameObject playerNameUI;
-    public GameObject gameOverUI;
+    public GameObject FinishLevelUI;
+    public GameObject LeaderboardUI;
+    public GameObject PlayerNameUI;
+    public GameObject GameOverUI;
     public GameObject PopUpUI;
     public Canvas canvas;
-    public RectTransform targetCoinUI;
+    public RectTransform TargetCoinUI;
 
 
     GameManager gameManager;
@@ -68,17 +68,17 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void CloseFinishUI()
     {
-        finishLevelUI.SetActive(false);
+        FinishLevelUI.SetActive(false);
     }
     public void OpenFinishUI()
     {
-        finishLevelUI.SetActive(true);
+        FinishLevelUI.SetActive(true);
     }
     public void OpenGameOverUIs()
     {
-        gameOverUI.SetActive(true);
-        playerNameUI.SetActive(true);
-        leaderboardUI.SetActive(true);
+        GameOverUI.SetActive(true);
+        PlayerNameUI.SetActive(true);
+        LeaderboardUI.SetActive(true);
     }
 
     /// <summary>
@@ -88,10 +88,10 @@ public class UIManager : MonoSingleton<UIManager>
     {
         //Debug.Log("DeactiveUIs");
         startUI.SetActive(false);
-        finishLevelUI.SetActive(false);
-        playerNameUI.SetActive(false);
-        leaderboardUI.SetActive(false);
-        gameOverUI.SetActive(false);
+        FinishLevelUI.SetActive(false);
+        PlayerNameUI.SetActive(false);
+        LeaderboardUI.SetActive(false);
+        GameOverUI.SetActive(false);
         UpdateScoreUI(gameManager.Score);
         UpdateGoldUI();
     }
@@ -106,8 +106,7 @@ public class UIManager : MonoSingleton<UIManager>
         scoreUI.text = gameManager.Score.ToString();
     }
     public void OpenPopUp()
-    {
-        //Debug.Log(" pop up");
+    { 
         StopAllCoroutines();
         PopUpUI.transform.localScale = Vector3.zero;
         PopUpUI.SetActive(true);

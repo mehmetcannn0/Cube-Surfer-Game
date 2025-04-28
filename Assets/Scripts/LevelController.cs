@@ -7,17 +7,16 @@ public class LevelController : MonoBehaviour
     LevelManager levelManager;
     private void Start()
     {
-        levelManager = LevelManager.Instance;
         gameManager = GameManager.Instance;
+        levelManager = LevelManager.Instance;
     }
- 
+
     public void StartLevel()
     {
-        Debug.Log("start level");//+
         if (!string.IsNullOrWhiteSpace(gameManager.PlayerName))
-        { 
-            gameManager.StartGame();//+
-            ActionController.OnLevelStart?.Invoke();//-
+        {
+            gameManager.StartGame();
+            ActionController.OnLevelStart?.Invoke();
         }
         else
         {
@@ -28,19 +27,23 @@ public class LevelController : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(gameManager.PlayerName))
         {
-            ActionController. OnLevelRestarted?.Invoke();
+            ActionController.OnLevelRestarted?.Invoke();
         }
         else
         {
             ActionController.OnPopUpOpened?.Invoke();
-
         }
+    }
+    public void NextLevel()
+    {
+        levelManager.ClearLevel();
+        levelManager.CreateLevel();
+        ActionController.OnNextLevelStarted?.Invoke();
     }
 
 }
 
-
 public static partial class ActionController
 {
-    public static Action OnLevelStart; 
+    public static Action OnLevelStart;
 }

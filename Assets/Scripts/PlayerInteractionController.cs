@@ -23,6 +23,7 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
             Destroy(gameObject);
         }
     }
+
     private void Start()
     {
         levelManager = LevelManager.Instance;
@@ -98,14 +99,12 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
             }
         }
     }
-     
 
     private void OnStackableInteraction(IStackable stackable)
     {
-        
+
         int cubeSize = stackable.OnStack();
         ActionController.OnScoreAdded?.Invoke(cubeSize);
-
 
         PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (2 * cubeSize * Vector3.up);
 

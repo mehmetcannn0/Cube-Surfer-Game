@@ -6,8 +6,8 @@ public class PrefabManager : MonoBehaviour
 {
     [SerializeField] List<PrefabData> prefabs = new List<PrefabData>();
 
-
     public static PrefabManager Instance;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -18,12 +18,13 @@ public class PrefabManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public GameObject InstantiateObjet(PrefabType prefabType, Vector3 objectPosition, Transform parent =null)
+
+    public GameObject InstantiateObjet(PrefabType prefabType, Vector3 objectPosition, Transform parent = null)
     {
         PrefabData data = prefabs.Find(p => p.Type == prefabType);
 
         return Instantiate(data.Prefab, objectPosition, Quaternion.identity, parent);
-    } 
+    }
 }
 
 public enum PrefabType
