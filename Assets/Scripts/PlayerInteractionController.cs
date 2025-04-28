@@ -2,33 +2,25 @@ using DG.Tweening;
 using System;
 using UnityEngine;
 
-public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerInteractionController>
+public class PlayerInteractionController :  MonoSingleton<PlayerInteractionController>
 {
+    private const float COLLISION_TRESHOLD = 0.7f;
+    private const int CUBE_WIDTH = 2;
+
+    private bool isGameOver;
     public Transform CubeParent;
     public Transform PlayerVisualTransform;
-    private bool isGameOver;
 
     LevelManager levelManager;
 
-    public static PlayerInteractionController Instance;
+    //protected override void Awake()
+    //{
+    //    base.Awake();
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
+    //}
     private void Start()
     {
-        levelManager = LevelManager.Instance;
-        //gameManager = GameManager.Instance;
-        //uiManager = UIManager.Instance; 
+        levelManager = LevelManager.Instance; 
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,15 +43,16 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
 
         IsCollisionForward(collision, directionToContact);
 
-        if (collision.gameObject.TryGetComponent(out IFinishLevel finishLevel))//interface
+        if (collision.gameObject.TryGetComponent(out IFinishLevel finishLevel))
         {
             finishLevel.FinishLevel();
+            isGameOver = false;
         }
     }
 
     private void IsCollisionForward(Collision collision, Vector3 directionToContact)
     {
-        if (Vector3.Dot(transform.forward, directionToContact) > 0.7f)
+        if (Vector3.Dot(transform.forward, directionToContact) > COLLISION_TRESHOLD)
         {
             if (collision.gameObject.TryGetComponent(out IStackable stackable))
             {
@@ -88,14 +81,14 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
         else
         {
             if (!isGameOver)
-            {
-                isGameOver = !isGameOver;
+            { 
+                ToggleIsGameOver();
                 SaveData.Instance.SavePlayerData();
                 ActionController.OnGameOver?.Invoke();
             }
             else
-            {
-                isGameOver = !isGameOver;
+            { 
+                ToggleIsGameOver();
             }
         }
     }
@@ -106,7 +99,7 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
         int cubeSize = stackable.OnStack();
         ActionController.OnScoreAdded?.Invoke(cubeSize);
 
-        PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (2 * cubeSize * Vector3.up);
+        PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (CUBE_WIDTH * cubeSize * Vector3.up);
 
     }
 
@@ -127,7 +120,7 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
         {
             Transform cube = CubeParent.GetChild(i);
             Vector3 childLocalPosition = cube.localPosition;
-            cube.localPosition = childLocalPosition + (2 * Vector3.down * wallSize);
+            cube.localPosition = childLocalPosition + (CUBE_WIDTH * Vector3.down * wallSize);
 
             transform.position = collision.gameObject.transform.position + (2.5f * wallSize * Vector3.up);
         }
@@ -136,12 +129,17 @@ public class PlayerInteractionController : MonoBehaviour// MonoSingleton<PlayerI
         {
             transform.position = collision.gameObject.transform.position + Vector3.up;
 
-            PlayerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (2 * wallSize)), 1.5f);
+            PlayerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (CUBE_WIDTH * wallSize)), 1.5f);
 
             return;
         }
 
-        PlayerVisualTransform.localPosition += 2 * Vector3.down * wallSize;
+        PlayerVisualTransform.localPosition += CUBE_WIDTH * Vector3.down * wallSize;
+    }
+
+    public void ToggleIsGameOver()
+    {
+        isGameOver = !isGameOver;
     }
 }
 

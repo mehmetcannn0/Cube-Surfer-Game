@@ -6,18 +6,19 @@ using UnityEngine;
 
 public class UIManager : MonoSingleton<UIManager>
 {
+    private const float POP_UP_ANIMATION_DURATION = 0.5f;
+
     [SerializeField] TextMeshProUGUI goldUI;
     [SerializeField] TextMeshProUGUI scoreUI;
-
     [SerializeField] GameObject startUI;
+
     public GameObject FinishLevelUI;
     public GameObject LeaderboardUI;
     public GameObject PlayerNameUI;
     public GameObject GameOverUI;
     public GameObject PopUpUI;
-    public Canvas canvas;
+    public Canvas Canvas;
     public RectTransform TargetCoinUI;
-
 
     GameManager gameManager;
 
@@ -36,7 +37,7 @@ public class UIManager : MonoSingleton<UIManager>
         ActionController.OnLevelStart += DeactiveUIs;
         ActionController.OnLevelRestarted += DeactiveUIs;
         ActionController.OnPopUpOpened += OpenPopUp;
-        ActionController.OnNextLevelStarted += CloseFinishUI ;
+        ActionController.OnNextLevelStarted += CloseFinishUI;
 
     }
 
@@ -46,14 +47,11 @@ public class UIManager : MonoSingleton<UIManager>
         ActionController.OnScoreAdded -= UpdateScoreUI;
         //ActionController.OnLevelFinished -= CloseFinishUI;
         ActionController.OnLevelFinished -= OpenFinishUI;
-
         ActionController.OnGameOver -= OpenGameOverUIs;
         ActionController.OnLevelStart -= DeactiveUIs;
         ActionController.OnLevelRestarted -= DeactiveUIs;
         ActionController.OnPopUpOpened -= OpenPopUp;
-        ActionController.OnNextLevelStarted -= CloseFinishUI ;
-
-
+        ActionController.OnNextLevelStarted -= CloseFinishUI;
     }
 
     public void MakeDeactiveUI(GameObject UIObject)
@@ -70,6 +68,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         FinishLevelUI.SetActive(false);
     }
+
     public void OpenFinishUI()
     {
         FinishLevelUI.SetActive(true);
@@ -101,16 +100,18 @@ public class UIManager : MonoSingleton<UIManager>
 
         goldUI.text = gameManager.Gold.ToString();
     }
+
     public void UpdateScoreUI(int addedScore)
     {
         scoreUI.text = gameManager.Score.ToString();
     }
+
     public void OpenPopUp()
-    { 
+    {
         StopAllCoroutines();
         PopUpUI.transform.localScale = Vector3.zero;
         PopUpUI.SetActive(true);
-        PopUpUI.transform.DOScale(1, 0.5f).OnComplete(() =>
+        PopUpUI.transform.DOScale(1, POP_UP_ANIMATION_DURATION).OnComplete(() =>
         {
             StartCoroutine(ClosePopUpAfterDelay(2f));
         });
@@ -119,13 +120,11 @@ public class UIManager : MonoSingleton<UIManager>
     private IEnumerator ClosePopUpAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        PopUpUI.transform.DOScale(0, 0.5f).OnComplete(() =>
+        PopUpUI.transform.DOScale(0, POP_UP_ANIMATION_DURATION).OnComplete(() =>
         {
             PopUpUI.SetActive(false);
         });
     }
-
-
 }
 
 public static partial class ActionController

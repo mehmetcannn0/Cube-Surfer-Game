@@ -2,22 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabManager : MonoBehaviour
+public class PrefabManager : MonoSingleton<PrefabManager>
 {
     [SerializeField] List<PrefabData> prefabs = new List<PrefabData>();
-
-    public static PrefabManager Instance;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
 
     public GameObject InstantiateObjet(PrefabType prefabType, Vector3 objectPosition, Transform parent = null)
     {

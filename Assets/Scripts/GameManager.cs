@@ -7,7 +7,7 @@ public class GameManager : MonoSingleton<GameManager>
     public int Score { get; private set; }
     public int Gold { get; private set; }
 
-    PlayerMovementManager playerMovementManager; 
+    PlayerMovementManager playerMovementManager;
 
     void Start()
     { 
@@ -16,10 +16,10 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void OnEnable()
     {
-        ActionController.OnScoreAdded += AddScore;
-        ActionController.OnGameOver += GameOver;
         Coin.OnCoinCollected += IncreaseGold;
      
+        ActionController.OnScoreAdded += AddScore;
+        ActionController.OnGameOver += GameOver;
         ActionController.OnLevelFinished += FinishLevel;
         ActionController.OnLevelRestarted += StartGame;
         ActionController.OnNextLevelStarted += NextLevel;

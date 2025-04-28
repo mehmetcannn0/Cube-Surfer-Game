@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour, ICollectable
 {
+    private const float COIN_ANIMATION_DURATION = 0.8f;
+
     public static event Action OnCoinCollected;
 
     PrefabManager prefabManager;
@@ -23,7 +25,7 @@ public class Coin : MonoBehaviour, ICollectable
     private void RotateCoin()
     {
         transform.DORotate(new Vector3(0, 360, 0), 2f, RotateMode.FastBeyond360)
-                 .SetEase(Ease.Linear)
+                 .SetEase(Ease.Linear)  
                  .SetLoops(-1, LoopType.Restart);
     }
 
@@ -37,12 +39,12 @@ public class Coin : MonoBehaviour, ICollectable
 
     public void PlayCoinCollectAnimation()
     {
-        GameObject animatedCoinUI = prefabManager.InstantiateObjet(prefabType: PrefabType.CoinUI, objectPosition: Vector3.zero, parent: uiManager.canvas.transform);
+        GameObject animatedCoinUI = prefabManager.InstantiateObjet(prefabType: PrefabType.CoinUI, objectPosition: Vector3.zero, parent: uiManager.Canvas.transform);
 
         RectTransform animatedCoin = animatedCoinUI.GetComponent<RectTransform>();
         animatedCoin.anchoredPosition3D = Vector3.zero;
 
-        animatedCoin.DOMove(uiManager.TargetCoinUI.position, 0.8f)
+        animatedCoin.DOMove(uiManager.TargetCoinUI.position, COIN_ANIMATION_DURATION)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() => Destroy(animatedCoin.gameObject));
     }

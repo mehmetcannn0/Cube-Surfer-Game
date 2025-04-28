@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class LevelManager : MonoSingleton<LevelManager>
 {
+    private const int COIN_COUNT_IN_GROUND = 200;
+    private const int SPACE_SIZE = 20;
+    private const int CUBE_WIDTH = 2;
+
     private int[] allowedXPositions = { -4, -2, 0, 2, 4 };
     private float groundlength;
-    private int coinCountInGround = 200;
-    private int spaceSize = 20;
 
     private List<GameObject> walls = new List<GameObject>();
     private List<GameObject> cubes = new List<GameObject>();
@@ -24,12 +26,6 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     public Transform CubesParentOnGround;
 
-    //public Action OnNextLevelStarted;
-    //public Action OnLevelRestarted;
-    //public Action OnLevelFinished;
-
-    //public Action OnGameOver; 
-
     public enum LevelDirection
     {
         Forward,
@@ -45,7 +41,6 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     private void OnEnable()
     {
-        //PlayerInteractionController.Instance.OnGameOver += GameOver;
         ActionController.OnLevelRestarted += ClearLevel;
         ActionController.OnLevelRestarted += CreateLevel;
         ActionController.OnNextLevelStarted += ClearLevel;
@@ -54,7 +49,6 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     private void OnDisable()
     {
-        //PlayerInteractionController.Instance.OnGameOver -= GameOver; 
         ActionController.OnLevelRestarted -= ClearLevel;
         ActionController.OnLevelRestarted -= CreateLevel;
         ActionController.OnNextLevelStarted -= ClearLevel;
@@ -63,14 +57,11 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     public void CreateLevel()
     {
-        Vector3 groundForward = Vector3.forward;
-        Vector3 groundLeft = Vector3.left;
-        Vector3 groundRight = Vector3.right;
         player.transform.position = Vector3.zero;
         playerVisualTransform.position = Vector3.zero;
         groundlength = ground.transform.localScale.z;
 
-        CreateGround(groundlength);
+        CreateFinishGround(groundlength);
 
         for (int i = 1; i < groundlength / 20; i++)
         {
@@ -108,7 +99,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             for (int k = 0; k < randomCubeSize; k++)
             {
-                Vector3 stackPos = basePos + Vector3.up * k * 2;
+                Vector3 stackPos = basePos + Vector3.up * k * CUBE_WIDTH;
                 GameObject cube = prefabManager.InstantiateObjet(prefabType: PrefabType.Cube, objectPosition: stackPos, parent: cubeTower.transform);
                 cubeTower.CubeList.Add(cube);
                 cubes.Add(cube);
@@ -131,7 +122,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             for (int k = 0; k < randomWallSize; k++)
             {
-                Vector3 stackPos = basePos + Vector3.up * k * 2;
+                Vector3 stackPos = basePos + Vector3.up * k * CUBE_WIDTH;
                 GameObject wall = prefabManager.InstantiateObjet(prefabType: PrefabType.Wall, objectPosition: stackPos, parent: wallTower.transform);
 
                 walls.Add(wall);
@@ -141,7 +132,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     private void CreateCoin(LevelDirection direction)
     {
-        for (int i = 0; i < coinCountInGround; i++)
+        for (int i = 0; i < COIN_COUNT_IN_GROUND; i++)
         {
             int randomX = allowedXPositions[UnityEngine.Random.Range(0, allowedXPositions.Length)];
             int randomZ;
@@ -163,11 +154,11 @@ public class LevelManager : MonoSingleton<LevelManager>
         switch (direction)
         {
             case LevelDirection.Forward:
-                return new Vector3(horizontalPosition + j * 2, 0, index * spaceSize) + startOffset;
+                return new Vector3(horizontalPosition + j * CUBE_WIDTH, 0, index * SPACE_SIZE) + startOffset;
             case LevelDirection.Left:
-                return new Vector3(-index * spaceSize, 0, horizontalPosition + j * 2) + startOffset;
+                return new Vector3(-index * SPACE_SIZE, 0, horizontalPosition + j * CUBE_WIDTH) + startOffset;
             case LevelDirection.Right:
-                return new Vector3(horizontalPosition + j * 2, 0, index * spaceSize) + startOffset;
+                return new Vector3(horizontalPosition + j * CUBE_WIDTH, 0, index * SPACE_SIZE) + startOffset;
             default:
                 return Vector3.zero;
         }
@@ -188,11 +179,10 @@ public class LevelManager : MonoSingleton<LevelManager>
         }
     }
 
-    private void CreateGround(float localScaleZ)
+    private void CreateFinishGround(float localScaleZ)
     {
         finishGroupGround = prefabManager.InstantiateObjet(prefabType: PrefabType.FinishGroup, objectPosition: new Vector3(-localScaleZ, -0.5f, 2 * localScaleZ + 15));
     }
-
 
     public void ClearLevel()
     {

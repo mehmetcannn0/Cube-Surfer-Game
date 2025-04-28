@@ -53,9 +53,9 @@ public class ShowPlayerDataWindow : EditorWindow
         foreach (var player in playerList.players)
         {
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField("Ad:", player.name);
-            EditorGUILayout.LabelField("Altýn:", player.gold.ToString());
-            EditorGUILayout.LabelField("Skor:", player.score.ToString());
+            EditorGUILayout.LabelField("Ad:", player.Name);
+            EditorGUILayout.LabelField("Altýn:", player.Gold.ToString());
+            EditorGUILayout.LabelField("Skor:", player.Score.ToString());
             EditorGUILayout.EndVertical();
         }
 

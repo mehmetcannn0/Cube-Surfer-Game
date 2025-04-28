@@ -6,9 +6,9 @@ public class LeaderboardManager : MonoBehaviour
 {
     public class PlayerUI
     {
-        public TMP_Text nameText;
-        public TMP_Text goldText;
-        public TMP_Text scoreText;
+        public TMP_Text NameText;
+        public TMP_Text GoldText;
+        public TMP_Text ScoreText;
     }
 
     private List<PlayerUI> playerUIList = new List<PlayerUI>();
@@ -41,9 +41,9 @@ public class LeaderboardManager : MonoBehaviour
         foreach (Transform child in leaderboardParent)
         {
             PlayerUI ui = new PlayerUI();
-            ui.nameText = child.Find("NameText").GetComponent<TextMeshProUGUI>();
-            ui.goldText = child.Find("GoldText").GetComponent<TextMeshProUGUI>();
-            ui.scoreText = child.Find("ScoreText").GetComponent<TextMeshProUGUI>();
+            ui.NameText = child.Find("NameText").GetComponent<TextMeshProUGUI>();
+            ui.GoldText = child.Find("GoldText").GetComponent<TextMeshProUGUI>();
+            ui.ScoreText = child.Find("ScoreText").GetComponent<TextMeshProUGUI>();
 
             playerUIList.Add(ui);
         }
@@ -51,22 +51,22 @@ public class LeaderboardManager : MonoBehaviour
 
     public void UpdateLeaderboardUI()
     {
-        var players = saveData.Leaderboard.players;
-        players.Sort((a, b) => b.score.CompareTo(a.score));
+        var players = saveData.Leaderboard.Players;
+        players.Sort((a, b) => b.Score.CompareTo(a.Score));
 
         for (int i = 0; i < playerUIList.Count; i++)
         {
             if (i < players.Count)
             {
-                playerUIList[i].nameText.text = players[i].name;
-                playerUIList[i].goldText.text = players[i].gold.ToString();
-                playerUIList[i].scoreText.text = players[i].score.ToString();
+                playerUIList[i].NameText.text = players[i].Name;
+                playerUIList[i].GoldText.text = players[i].Gold.ToString();
+                playerUIList[i].ScoreText.text = players[i].Score.ToString();
             }
             else
             {
-                playerUIList[i].nameText.text = "-";
-                playerUIList[i].goldText.text = "";
-                playerUIList[i].scoreText.text = "";
+                playerUIList[i].NameText.text = "-";
+                playerUIList[i].GoldText.text = "";
+                playerUIList[i].ScoreText.text = "";
             }
         }
     }

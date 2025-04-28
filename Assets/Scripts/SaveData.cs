@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SaveData : MonoBehaviour
 {
+    private const string PLAYER_DATA_FILE_NAME = "/PlayerData.json";
     GameManager gameManager;
     public Leaderboard Leaderboard = new Leaderboard();
     public static SaveData Instance;
@@ -32,7 +33,7 @@ public class SaveData : MonoBehaviour
     {
         string leaderboardData = JsonUtility.ToJson(Leaderboard, true);
         //Debug.Log("string "  + leaderboardData);
-        string filePath = Application.persistentDataPath + "/PlayerData.json";
+        string filePath = Application.persistentDataPath + PLAYER_DATA_FILE_NAME;
         System.IO.File.WriteAllText(filePath, leaderboardData);
         Debug.Log("data kaydedýldý");
         //Debug.Log(filePath);
@@ -40,7 +41,7 @@ public class SaveData : MonoBehaviour
 
     public void LoadFromJson()
     {
-        string filePath = Application.persistentDataPath + "/PlayerData.json";
+        string filePath = Application.persistentDataPath + PLAYER_DATA_FILE_NAME;
         if (System.IO.File.Exists(filePath))
         {
             string jsonData = System.IO.File.ReadAllText(filePath);
@@ -55,10 +56,10 @@ public class SaveData : MonoBehaviour
     public void SavePlayerData()
     {
         Player newPlayer = new Player();
-        newPlayer.name = gameManager.PlayerName;
-        newPlayer.score = gameManager.Score;
-        newPlayer.gold = gameManager.Gold;
-        Leaderboard.players.Add(newPlayer);
+        newPlayer.Name = gameManager.PlayerName;
+        newPlayer.Score = gameManager.Score;
+        newPlayer.Gold = gameManager.Gold;
+        Leaderboard.Players.Add(newPlayer);
         SaveToJson();
     }
 
@@ -67,14 +68,14 @@ public class SaveData : MonoBehaviour
 [System.Serializable]
 public class Leaderboard
 {
-    public List<Player> players = new List<Player>();
+    public List<Player> Players = new List<Player>();
 }
 
 [System.Serializable]
 public class Player
 {
-    public string name;
-    public int gold;
-    public int score;
+    public string Name;
+    public int Gold;
+    public int Score;
 }
 
