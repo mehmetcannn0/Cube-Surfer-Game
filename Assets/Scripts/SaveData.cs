@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SaveData : MonoBehaviour
 {
-    private const string PLAYER_DATA_FILE_NAME = "/PlayerData.json";
     GameManager gameManager;
     public Leaderboard Leaderboard = new Leaderboard();
     public static SaveData Instance;
@@ -33,7 +32,7 @@ public class SaveData : MonoBehaviour
     {
         string leaderboardData = JsonUtility.ToJson(Leaderboard, true);
         //Debug.Log("string "  + leaderboardData);
-        string filePath = Application.persistentDataPath + PLAYER_DATA_FILE_NAME;
+        string filePath = Application.persistentDataPath + Utils.PLAYER_DATA_FILE_NAME;
         System.IO.File.WriteAllText(filePath, leaderboardData);
         Debug.Log("data kaydedýldý");
         //Debug.Log(filePath);
@@ -41,7 +40,7 @@ public class SaveData : MonoBehaviour
 
     public void LoadFromJson()
     {
-        string filePath = Application.persistentDataPath + PLAYER_DATA_FILE_NAME;
+        string filePath = Application.persistentDataPath + Utils.PLAYER_DATA_FILE_NAME;
         if (System.IO.File.Exists(filePath))
         {
             string jsonData = System.IO.File.ReadAllText(filePath);

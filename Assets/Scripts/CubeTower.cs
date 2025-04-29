@@ -4,7 +4,6 @@ using UnityEngine;
 public class CubeTower : MonoBehaviour, IStackable
 {
     private BoxCollider cubeTowerBoxCollider;
-    private const int CUBE_WIDTH = 2;
 
     public List<GameObject> CubeList;
     public int CubeSize;
@@ -23,7 +22,7 @@ public class CubeTower : MonoBehaviour, IStackable
         for (int i = 0; i < CubeSize; i++)
         {
             CubeList[i].transform.SetParent(playerInteractionController.CubeParent);
-            CubeList[i].transform.localPosition = playerInteractionController.PlayerVisualTransform.localPosition + Vector3.up * CUBE_WIDTH * i;
+            CubeList[i].transform.localPosition = playerInteractionController.PlayerVisualTransform.localPosition + Vector3.up * Utils.CUBE_WIDTH * i;
         }
         return CubeSize;
     }

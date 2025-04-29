@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class UIManager : MonoSingleton<UIManager>
 {
-    private const float POP_UP_ANIMATION_DURATION = 0.5f;
-
     [SerializeField] TextMeshProUGUI goldUI;
     [SerializeField] TextMeshProUGUI scoreUI;
     [SerializeField] GameObject startUI;
@@ -31,37 +29,18 @@ public class UIManager : MonoSingleton<UIManager>
     {
         Coin.OnCoinCollected += UpdateGoldUI;
         ActionController.OnScoreAdded += UpdateScoreUI;
-        //ActionController.OnLevelFinished += CloseFinishUI;
         ActionController.OnLevelFinished += OpenFinishUI;
         ActionController.OnGameOver += OpenGameOverUIs;
-        ActionController.OnLevelStart += DeactiveUIs;
-        ActionController.OnLevelRestarted += DeactiveUIs;
         ActionController.OnPopUpOpened += OpenPopUp;
-        ActionController.OnNextLevelStarted += CloseFinishUI;
-
     }
 
     private void OnDisable()
     {
         Coin.OnCoinCollected -= UpdateGoldUI;
         ActionController.OnScoreAdded -= UpdateScoreUI;
-        //ActionController.OnLevelFinished -= CloseFinishUI;
         ActionController.OnLevelFinished -= OpenFinishUI;
         ActionController.OnGameOver -= OpenGameOverUIs;
-        ActionController.OnLevelStart -= DeactiveUIs;
-        ActionController.OnLevelRestarted -= DeactiveUIs;
         ActionController.OnPopUpOpened -= OpenPopUp;
-        ActionController.OnNextLevelStarted -= CloseFinishUI;
-    }
-
-    public void MakeDeactiveUI(GameObject UIObject)
-    {
-        UIObject.SetActive(false);
-    }
-
-    public void MakeActiveUI(GameObject UIObject)
-    {
-        UIObject.SetActive(true);
     }
 
     public void CloseFinishUI()
@@ -85,19 +64,21 @@ public class UIManager : MonoSingleton<UIManager>
     /// </summary>
     public void DeactiveUIs()
     {
-        //Debug.Log("DeactiveUIs");
-        startUI.SetActive(false);
-        FinishLevelUI.SetActive(false);
-        PlayerNameUI.SetActive(false);
-        LeaderboardUI.SetActive(false);
-        GameOverUI.SetActive(false);
-        UpdateScoreUI(gameManager.Score);
-        UpdateGoldUI();
+        if (!string.IsNullOrWhiteSpace(gameManager.PlayerName))
+        {
+            //Debug.Log("DeactiveUIs");
+            startUI.SetActive(false);
+            FinishLevelUI.SetActive(false);
+            PlayerNameUI.SetActive(false);
+            LeaderboardUI.SetActive(false);
+            GameOverUI.SetActive(false);
+            UpdateScoreUI(gameManager.Score);
+            UpdateGoldUI();
+        }
     }
 
     public void UpdateGoldUI()
     {
-
         goldUI.text = gameManager.Gold.ToString();
     }
 
@@ -111,7 +92,7 @@ public class UIManager : MonoSingleton<UIManager>
         StopAllCoroutines();
         PopUpUI.transform.localScale = Vector3.zero;
         PopUpUI.SetActive(true);
-        PopUpUI.transform.DOScale(1, POP_UP_ANIMATION_DURATION).OnComplete(() =>
+        PopUpUI.transform.DOScale(1, Utils.POP_UP_ANIMATION_DURATION).OnComplete(() =>
         {
             StartCoroutine(ClosePopUpAfterDelay(2f));
         });
@@ -120,7 +101,7 @@ public class UIManager : MonoSingleton<UIManager>
     private IEnumerator ClosePopUpAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        PopUpUI.transform.DOScale(0, POP_UP_ANIMATION_DURATION).OnComplete(() =>
+        PopUpUI.transform.DOScale(0, Utils.POP_UP_ANIMATION_DURATION).OnComplete(() =>
         {
             PopUpUI.SetActive(false);
         });

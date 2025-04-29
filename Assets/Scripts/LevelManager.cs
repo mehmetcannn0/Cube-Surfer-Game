@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class LevelManager : MonoSingleton<LevelManager>
 {
-    private const int COIN_COUNT_IN_GROUND = 200;
-    private const int SPACE_SIZE = 20;
-    private const int CUBE_WIDTH = 2;
-
     private int[] allowedXPositions = { -4, -2, 0, 2, 4 };
     private float groundlength;
 
@@ -41,22 +37,19 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     private void OnEnable()
     {
-        ActionController.OnLevelRestarted += ClearLevel;
         ActionController.OnLevelRestarted += CreateLevel;
-        ActionController.OnNextLevelStarted += ClearLevel;
         ActionController.OnNextLevelStarted += CreateLevel;
     }
 
     private void OnDisable()
     {
-        ActionController.OnLevelRestarted -= ClearLevel;
         ActionController.OnLevelRestarted -= CreateLevel;
-        ActionController.OnNextLevelStarted -= ClearLevel;
         ActionController.OnNextLevelStarted -= CreateLevel;
     }
 
     public void CreateLevel()
     {
+        ClearLevel();
         player.transform.position = Vector3.zero;
         playerVisualTransform.position = Vector3.zero;
         groundlength = ground.transform.localScale.z;
@@ -99,7 +92,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             for (int k = 0; k < randomCubeSize; k++)
             {
-                Vector3 stackPos = basePos + Vector3.up * k * CUBE_WIDTH;
+                Vector3 stackPos = basePos + Vector3.up * k * Utils.CUBE_WIDTH;
                 GameObject cube = prefabManager.InstantiateObjet(prefabType: PrefabType.Cube, objectPosition: stackPos, parent: cubeTower.transform);
                 cubeTower.CubeList.Add(cube);
                 cubes.Add(cube);
@@ -122,7 +115,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             for (int k = 0; k < randomWallSize; k++)
             {
-                Vector3 stackPos = basePos + Vector3.up * k * CUBE_WIDTH;
+                Vector3 stackPos = basePos + Vector3.up * k * Utils.CUBE_WIDTH;
                 GameObject wall = prefabManager.InstantiateObjet(prefabType: PrefabType.Wall, objectPosition: stackPos, parent: wallTower.transform);
 
                 walls.Add(wall);
@@ -132,7 +125,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     private void CreateCoin(LevelDirection direction)
     {
-        for (int i = 0; i < COIN_COUNT_IN_GROUND; i++)
+        for (int i = 0; i < Utils.COIN_COUNT_IN_GROUND; i++)
         {
             int randomX = allowedXPositions[UnityEngine.Random.Range(0, allowedXPositions.Length)];
             int randomZ;
@@ -154,11 +147,11 @@ public class LevelManager : MonoSingleton<LevelManager>
         switch (direction)
         {
             case LevelDirection.Forward:
-                return new Vector3(horizontalPosition + j * CUBE_WIDTH, 0, index * SPACE_SIZE) + startOffset;
+                return new Vector3(horizontalPosition + j * Utils.CUBE_WIDTH, 0, index * Utils.SPACE_SIZE) + startOffset;
             case LevelDirection.Left:
-                return new Vector3(-index * SPACE_SIZE, 0, horizontalPosition + j * CUBE_WIDTH) + startOffset;
+                return new Vector3(-index * Utils.SPACE_SIZE, 0, horizontalPosition + j * Utils.CUBE_WIDTH) + startOffset;
             case LevelDirection.Right:
-                return new Vector3(horizontalPosition + j * CUBE_WIDTH, 0, index * SPACE_SIZE) + startOffset;
+                return new Vector3(horizontalPosition + j * Utils.CUBE_WIDTH, 0, index * Utils.SPACE_SIZE) + startOffset;
             default:
                 return Vector3.zero;
         }
@@ -189,7 +182,9 @@ public class LevelManager : MonoSingleton<LevelManager>
         DestroyObjects(walls);
         DestroyObjects(cubes);
         DestroyObjects(coins);
-        Destroy(finishGroupGround);
+
+        if (walls != null)
+            Destroy(finishGroupGround);
     }
 
     public void DestroyObjects(List<GameObject> list)

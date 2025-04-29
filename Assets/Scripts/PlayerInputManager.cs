@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class PlayerInputManager : MonoBehaviour
 {
-    private const float TOUCH_SENSITIVITY = 15f;
     public float HorizontalValue { get; private set; }
     public bool IsActive { get; private set; }
 
@@ -36,7 +35,7 @@ public class PlayerInputManager : MonoBehaviour
 
             if (touch.phase == TouchPhase.Moved)
             {
-                HorizontalValue = touch.deltaPosition.x * TOUCH_SENSITIVITY * Time.deltaTime;
+                HorizontalValue = touch.deltaPosition.x * Utils.TOUCH_SENSITIVITY * Time.deltaTime;
             }
         }
         else

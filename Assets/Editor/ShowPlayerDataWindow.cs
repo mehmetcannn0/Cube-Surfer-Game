@@ -1,12 +1,12 @@
-using UnityEngine;
-using UnityEditor;
 using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 public class ShowPlayerDataWindow : EditorWindow
 {
     private PlayerList playerList;
 
-    [MenuItem("Tools/Player Tools/Oyuncu Verilerini Göster")]
+    [MenuItem("Tools/Player Tools/Oyuncu Verilerini Göster-Sil")]
     public static void ShowWindow()
     {
         GetWindow<ShowPlayerDataWindow>("Oyuncu Verileri");
@@ -35,9 +35,10 @@ public class ShowPlayerDataWindow : EditorWindow
         }
     }
 
+
     private void OnGUI()
     {
-        if (playerList == null || playerList.players == null)
+        if (playerList == null || playerList.Players == null)
         {
             EditorGUILayout.HelpBox("Oyuncu verisi yüklenemedi!", MessageType.Warning);
             if (GUILayout.Button("Yeniden Dene"))
@@ -50,7 +51,7 @@ public class ShowPlayerDataWindow : EditorWindow
         EditorGUILayout.LabelField("Oyuncu Listesi", EditorStyles.boldLabel);
         EditorGUILayout.Space();
 
-        foreach (var player in playerList.players)
+        foreach (PlayerData player in playerList.Players)
         {
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField("Ad:", player.Name);
@@ -63,18 +64,24 @@ public class ShowPlayerDataWindow : EditorWindow
         {
             LoadPlayerData();
         }
+
+        if (GUILayout.Button("Oyuncu Verilerini Sil"))
+        {
+            DeletePlayerData.DeletePlayerDataFile();
+            LoadPlayerData();   
+        }
     }
 }
 
 [System.Serializable]
 public class PlayerData
 {
-    public string playerName;
-    public int level;
-    public int gold;
+    public string Name;
+    public int Score;
+    public int Gold;
 }
 [System.Serializable]
 public class PlayerList
 {
-    public Player[] players;
+    public PlayerData[] Players;
 }

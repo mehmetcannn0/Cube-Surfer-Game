@@ -3,10 +3,7 @@ using UnityEngine;
 
 public class PlayerMovementManager : MonoBehaviour
 {
-    [SerializeField] float forwardMovementSpeed = 0;
-
-    private const float ROTATION_ANIMATION_TÝME = 1f;
-
+    private float forwardMovementSpeed = 0;
     private float horizontalLimitValue = 4;
     private float horizontalMovementSpeed = 0;
     private float newPositionHorizontalValue;
@@ -97,7 +94,7 @@ public class PlayerMovementManager : MonoBehaviour
         if (Direction == PlayerDirection.Forward)
         {
             horizontalLimitValue = 362;
-            transform.DORotate(new Vector3(0, -90, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
+            transform.DORotate(new Vector3(0, -90, 0), Utils.ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
                 Direction = PlayerDirection.Left;
                 playerInputManager.ToggleIsActive();
@@ -108,7 +105,7 @@ public class PlayerMovementManager : MonoBehaviour
         else if (Direction == PlayerDirection.Left)
         {
             horizontalLimitValue = -354;
-            transform.DORotate(new Vector3(0, 0, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
+            transform.DORotate(new Vector3(0, 0, 0), Utils.ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
                 Direction = PlayerDirection.Right;
                 playerInputManager.ToggleIsActive();
@@ -119,7 +116,7 @@ public class PlayerMovementManager : MonoBehaviour
         else if (Direction == PlayerDirection.Right)
         {
             horizontalLimitValue = 4;
-            transform.DORotate(new Vector3(0, 0, 0), ROTATION_ANIMATION_TÝME).OnComplete(() =>
+            transform.DORotate(new Vector3(0, 0, 0), Utils.ROTATION_ANIMATION_TÝME).OnComplete(() =>
             {
                 Direction = PlayerDirection.Forward;
                 playerInputManager.ToggleIsActive();

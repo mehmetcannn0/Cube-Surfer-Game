@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PlayerInteractionController :  MonoSingleton<PlayerInteractionController>
 {
-    private const float COLLISION_TRESHOLD = 0.7f;
-    private const int CUBE_WIDTH = 2;
-
     private bool isGameOver;
     public Transform CubeParent;
     public Transform PlayerVisualTransform;
@@ -52,7 +49,7 @@ public class PlayerInteractionController :  MonoSingleton<PlayerInteractionContr
 
     private void IsCollisionForward(Collision collision, Vector3 directionToContact)
     {
-        if (Vector3.Dot(transform.forward, directionToContact) > COLLISION_TRESHOLD)
+        if (Vector3.Dot(transform.forward, directionToContact) > Utils.COLLISION_TRESHOLD)
         {
             if (collision.gameObject.TryGetComponent(out IStackable stackable))
             {
@@ -99,7 +96,7 @@ public class PlayerInteractionController :  MonoSingleton<PlayerInteractionContr
         int cubeSize = stackable.OnStack();
         ActionController.OnScoreAdded?.Invoke(cubeSize);
 
-        PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (CUBE_WIDTH * cubeSize * Vector3.up);
+        PlayerVisualTransform.localPosition = PlayerVisualTransform.localPosition + (Utils.CUBE_WIDTH * cubeSize * Vector3.up);
 
     }
 
@@ -120,7 +117,7 @@ public class PlayerInteractionController :  MonoSingleton<PlayerInteractionContr
         {
             Transform cube = CubeParent.GetChild(i);
             Vector3 childLocalPosition = cube.localPosition;
-            cube.localPosition = childLocalPosition + (CUBE_WIDTH * Vector3.down * wallSize);
+            cube.localPosition = childLocalPosition + (Utils.CUBE_WIDTH * Vector3.down * wallSize);
 
             transform.position = collision.gameObject.transform.position + (2.5f * wallSize * Vector3.up);
         }
@@ -129,12 +126,12 @@ public class PlayerInteractionController :  MonoSingleton<PlayerInteractionContr
         {
             transform.position = collision.gameObject.transform.position + Vector3.up;
 
-            PlayerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (CUBE_WIDTH * wallSize)), 1.5f);
+            PlayerVisualTransform.DOLocalMoveY((playerVisualPosition.y - (Utils.CUBE_WIDTH * wallSize)), 1.5f);
 
             return;
         }
 
-        PlayerVisualTransform.localPosition += CUBE_WIDTH * Vector3.down * wallSize;
+        PlayerVisualTransform.localPosition += Utils.CUBE_WIDTH * Vector3.down * wallSize;
     }
 
     public void ToggleIsGameOver()
